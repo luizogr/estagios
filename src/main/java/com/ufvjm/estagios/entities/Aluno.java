@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.UUID;
 
 @Entity
 @Table(name = "tb_alunos")
@@ -14,41 +15,39 @@ public class Aluno implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
-    public String nome;
-    public String matricula;
-    public String emailInstitucional;
+    @Column(unique = true)
+    private String matricula;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    public String senha;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuario_id", referencedColumnName = "id")
+    private Usuario usuario;
 
     public Aluno() {
     }
 
-    public Aluno(Long id, String nome, String matricula, String emailInstitucional, String senha) {
+    public Aluno(UUID id, String matricula, Usuario usuario) {
         this.id = id;
-        this.nome = nome;
         this.matricula = matricula;
-        this.emailInstitucional = emailInstitucional;
-        this.senha = senha;
+        this.usuario = usuario;
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
-    public String getNome() {
-        return nome;
+    public Usuario getUsuario() {
+        return usuario;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 
     public String getMatricula() {
@@ -57,22 +56,6 @@ public class Aluno implements Serializable {
 
     public void setMatricula(String matricula) {
         this.matricula = matricula;
-    }
-
-    public String getEmailInstitucional() {
-        return emailInstitucional;
-    }
-
-    public void setEmailInstitucional(String emailInstitucional) {
-        this.emailInstitucional = emailInstitucional;
-    }
-
-    public String getSenha() {
-        return senha;
-    }
-
-    public void setSenha(String senha) {
-        this.senha = senha;
     }
 
     @Override

@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "alunos")
 public class AlunoResource {
 
-    @GetMapping
+    /*@GetMapping
     public ResponseEntity<Aluno> findAll(){
         Aluno a = new Aluno(1L, "Luiz", "123456", "@ufvjm.edu.br", "1234");
         return ResponseEntity.ok().body(a);
-    }
+    }*/
 
 }
