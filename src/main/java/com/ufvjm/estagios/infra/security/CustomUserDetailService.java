@@ -20,7 +20,7 @@ public class CustomUserDetailService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Usuario usuario = this.repository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        Usuario usuario = this.repository.findByEmailInstitucional(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         var authorities = Collections.singletonList(new SimpleGrantedAuthority(usuario.getRole().name()));
 
