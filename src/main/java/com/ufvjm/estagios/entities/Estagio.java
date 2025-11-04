@@ -46,6 +46,7 @@ public class Estagio {
 
     private Boolean seguro;
 
+    @Enumerated(EnumType.STRING)
     private StatusEstagio statusEstagio;
 
     private  LocalDate dataEntregaTCE; // Conferir se coloca um boolean

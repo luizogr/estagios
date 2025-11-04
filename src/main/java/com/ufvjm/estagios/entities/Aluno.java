@@ -1,5 +1,6 @@
 package com.ufvjm.estagios.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
@@ -23,6 +24,7 @@ public class Aluno implements Serializable {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", referencedColumnName = "id")
+    @JsonIgnore
     private Usuario usuario;
 
     public Aluno() {
