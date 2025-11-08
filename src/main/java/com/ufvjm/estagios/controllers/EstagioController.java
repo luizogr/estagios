@@ -1,6 +1,8 @@
 package com.ufvjm.estagios.controllers;
 
+import com.ufvjm.estagios.dto.AditivoCreateDTO;
 import com.ufvjm.estagios.dto.EstagioCreateDTO;
+import com.ufvjm.estagios.entities.Aditivo;
 import com.ufvjm.estagios.entities.Estagio;
 import com.ufvjm.estagios.entities.Usuario;
 import com.ufvjm.estagios.services.EstagioService;
@@ -52,6 +54,11 @@ public class EstagioController {
         return ResponseEntity.ok(estagio);
     }
 
-
+    @PostMapping("/{id}/aditivos")
+    @PreAuthorize("hasRole('ALUNO')")
+    public ResponseEntity<Aditivo> proporAditivo(@PathVariable UUID id, @RequestBody AditivoCreateDTO dto){
+        Aditivo novoAditivo = estagioService.proporAditivo(id, dto);
+        return ResponseEntity.ok(novoAditivo);
+    }
 
 }

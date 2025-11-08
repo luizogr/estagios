@@ -1,5 +1,6 @@
 package com.ufvjm.estagios.entities;
 
+import com.ufvjm.estagios.entities.enums.StatusAditivo;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -18,15 +19,19 @@ public class Aditivo {
     @JoinColumn(name = "id_estagio")
     private Estagio estagio;
 
-    private LocalDate dataAditivo;
+    private LocalDate novaDataTermino;
+
+    @Enumerated(EnumType.STRING)
+    private StatusAditivo status;
 
     public Aditivo() {
     }
 
-    public Aditivo(UUID id, Estagio estagio, LocalDate dataAditivo) {
+    public Aditivo(UUID id, Estagio estagio, LocalDate dataAditivo, StatusAditivo status) {
         this.id = id;
         this.estagio = estagio;
-        this.dataAditivo = dataAditivo;
+        this.novaDataTermino = dataAditivo;
+        this.status = status;
     }
 
     public UUID getId() {
@@ -45,12 +50,20 @@ public class Aditivo {
         this.estagio = estagio;
     }
 
-    public LocalDate getDataAditivo() {
-        return dataAditivo;
+    public LocalDate getNovaDataTermino() {
+        return novaDataTermino;
     }
 
-    public void setDataAditivo(LocalDate dataAditivo) {
-        this.dataAditivo = dataAditivo;
+    public void setNovaDataTermino(LocalDate novaDataTermino) {
+        this.novaDataTermino = novaDataTermino;
+    }
+
+    public StatusAditivo getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusAditivo status) {
+        this.status = status;
     }
 
     @Override

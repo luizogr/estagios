@@ -1,12 +1,12 @@
 package com.ufvjm.estagios.services;
 
+import com.ufvjm.estagios.dto.AditivoCreateDTO;
 import com.ufvjm.estagios.dto.EstagioCreateDTO;
-import com.ufvjm.estagios.entities.Aluno;
-import com.ufvjm.estagios.entities.Estagio;
-import com.ufvjm.estagios.entities.Professor;
-import com.ufvjm.estagios.entities.Usuario;
+import com.ufvjm.estagios.entities.*;
 import com.ufvjm.estagios.entities.enums.Role;
+import com.ufvjm.estagios.entities.enums.StatusAditivo;
 import com.ufvjm.estagios.entities.enums.StatusEstagio;
+import com.ufvjm.estagios.repositories.AditivoRepository;
 import com.ufvjm.estagios.repositories.AlunoRepository;
 import com.ufvjm.estagios.repositories.EstagioRepository;
 import com.ufvjm.estagios.repositories.ProfessorRepository;
@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import java.time.Period;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,6 +31,8 @@ public class EstagioService {
     private ProfessorRepository professorRepository;
     @Autowired
     private RelatorioService relatorioService;
+    @Autowired
+    private AditivoRepository aditivoRepository;
 
     @Transactional
     public Estagio criarEstagio(EstagioCreateDTO dto){
@@ -140,6 +143,26 @@ public class EstagioService {
         Professor professor = professorRepository.findByUsuario(usuarioLogado)
                 .orElseThrow(() -> new RuntimeException("Perfil não encontrado"));
         return estagioRepository.findByOrientador(professor);
+    }
+
+    @Transactional
+    public Aditivo proporAditivo(UUID estagioId, AditivoCreateDTO dto) {
+        Estagio estagio = estagioRepository.findById(estagioId)
+                .orElseThrow(() -> new RuntimeException("Estagio não encontrado"));
+
+        Period duracaoTotal = Period.between(estagio.getDataInicio(), dto.novaDataTermino());
+
+        long diasDeEstagio = estagio.getDataInicio().until(dto.novaDataTermino(), java.time.temporal.ChronoUnit.DAYS);
+        if (diasDeEstagio > (365 * 2)) {
+            throw new RuntimeException("O estagio não pode exceder 2 anos");
+        }
+
+        Aditivo aditivo = new Aditivo();
+        aditivo.setNovaDataTermino(dto.novaDataTermino());
+        aditivo.setStatus(StatusAditivo.EM_ANALISE);
+        aditivo.setEstagio(estagio);
+
+        return aditivoRepository.save(aditivo);
     }
 
 }
