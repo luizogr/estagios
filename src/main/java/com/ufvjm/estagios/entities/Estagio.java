@@ -30,6 +30,8 @@ public class Estagio {
 
     private String supervisor;
 
+    // Adicionar formação do supervisor
+
     private LocalDate dataInicio;
 
     private LocalDate dataTermino;

@@ -10,4 +10,6 @@ import java.util.UUID;
 public interface AlunoRepository extends JpaRepository<Aluno, UUID> {
     @Override
     Optional<Aluno> findById(UUID uuid);
+
+    Optional<Aluno> findByUsuario(Usuario usuario);
 }
