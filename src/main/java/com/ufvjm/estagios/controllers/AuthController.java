@@ -64,13 +64,13 @@ public class AuthController {
         newUsuario.setSenha(passwordEncoder.encode(body.senha()));
         newUsuario.setEmailInstitucional(body.emailInstitucional());
         newUsuario.setNome(body.nome());
-        newUsuario.setRole(Role.ROLE_ALUNO); // <-- DEFINE O ROLE
+        newUsuario.setRole(Role.ROLE_ALUNO);
         Usuario usuarioSalvo = this.repository.save(newUsuario); // Salva e recupera com o ID
 
         // 3. Cria a entidade Aluno e liga ao Usuario
         Aluno newAluno = new Aluno();
         newAluno.setMatricula(body.matricula());
-        newAluno.setUsuario(usuarioSalvo); // <-- LIGA O ALUNO AO USUÁRIO
+        newAluno.setUsuario(usuarioSalvo);
         this.alunoRepository.save(newAluno);
 
         // 4. Gera o token e retorna
@@ -90,13 +90,13 @@ public class AuthController {
         newUsuario.setSenha(passwordEncoder.encode(body.senha()));
         newUsuario.setEmailInstitucional(body.emailInstitucional());
         newUsuario.setNome(body.nome());
-        newUsuario.setRole(Role.ROLE_PROFESSOR); // <-- DEFINE O ROLE
+        newUsuario.setRole(Role.ROLE_PROFESSOR);
         Usuario usuarioSalvo = this.repository.save(newUsuario);
 
         // 3. Cria a entidade Professor e liga ao Usuario
         Professor newProfessor = new Professor();
         newProfessor.setSiap(body.siap());
-        newProfessor.setUsuario(usuarioSalvo); // <-- LIGA O PROFESSOR AO USUÁRIO
+        newProfessor.setUsuario(usuarioSalvo);
         this.professorRepository.save(newProfessor);
 
         // 4. Gera o token e retorna

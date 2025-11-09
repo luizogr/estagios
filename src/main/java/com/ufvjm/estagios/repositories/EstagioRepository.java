@@ -16,4 +16,6 @@ public interface EstagioRepository extends JpaRepository<Estagio, UUID> {
     List<Estagio> findByAluno(Aluno aluno);
 
     List<Estagio> findByOrientador(Professor professor);
+
+    List<Estagio> findByStatusEstagio(StatusEstagio status);
 }
