@@ -165,4 +165,102 @@ public class EstagioService {
         return aditivoRepository.save(aditivo);
     }
 
+    @Transactional
+    public Estagio concluirEstagio(UUID estagioId, Usuario usuarioLogado) {
+        Estagio estagio = estagioRepository.findById(estagioId)
+                .orElseThrow(() -> new RuntimeException("Estagio não encontrado"));
+
+        verificaDonoDoEstagio(estagio, usuarioLogado);
+
+        estagio.setStatusEstagio(StatusEstagio.ANALISE_CONCLUIDO);
+
+        return estagioRepository.save(estagio);
+    }
+
+    @Transactional
+    public void aprovarConclusao(UUID estagioId, Usuario usuarioLogado){
+
+        Estagio estagio = estagioRepository.findById(estagioId)
+                .orElseThrow(() -> new RuntimeException("Estagio não encontrado"));
+
+        boolean temPermissao = false;
+
+        if (usuarioLogado.getRole() == Role.ROLE_COORDENADOR) {
+            temPermissao = true;
+        } else if (usuarioLogado.getRole() == Role.ROLE_PROFESSOR) {
+            Professor professor = professorRepository.findByUsuario(usuarioLogado)
+                    .orElseThrow(() -> new RuntimeException("Perfil não encontrado"));
+
+            if(estagio.getOrientador().equals(professor)){
+                temPermissao = true;
+            }
+        }
+        if (!temPermissao) {
+            throw new AccessDeniedException("Usuario sem permissão");
+        }
+
+        if (estagio.getStatusEstagio() == StatusEstagio.ANALISE_CONCLUIDO) {
+            estagio.setStatusEstagio(StatusEstagio.CONCLUIDO);
+
+            estagioRepository.save(estagio);
+        } else {
+            throw new RuntimeException("Estagio não está em analise de conclusão");
+        }
+    }
+
+    @Transactional
+    public Estagio rescindirEstagio(UUID estagioId, Usuario usuarioLogado){
+        Estagio estagio = estagioRepository.findById(estagioId)
+                .orElseThrow(() -> new RuntimeException("Estagio não encontrado"));
+
+        verificaDonoDoEstagio(estagio, usuarioLogado);
+
+        estagio.setStatusEstagio(StatusEstagio.ANALISE_RESCINDIDO);
+
+        return estagioRepository.save(estagio);
+    }
+
+    @Transactional
+    public void aprovarRescisao(UUID estagioId, Usuario usuarioLogado){
+
+        Estagio estagio = estagioRepository.findById(estagioId)
+                .orElseThrow(() -> new RuntimeException("Estagio não encontrado"));
+
+        boolean temPermissao = false;
+
+        if (usuarioLogado.getRole() == Role.ROLE_COORDENADOR) {
+            temPermissao = true;
+        } else if (usuarioLogado.getRole() == Role.ROLE_PROFESSOR) {
+            Professor professor = professorRepository.findByUsuario(usuarioLogado)
+                    .orElseThrow(() -> new RuntimeException("Perfil não encontrado"));
+
+            if(estagio.getOrientador().equals(professor)){
+                temPermissao = true;
+            }
+        }
+        if (!temPermissao) {
+            throw new AccessDeniedException("Usuario sem permissão");
+        }
+
+        if (estagio.getStatusEstagio() == StatusEstagio.ANALISE_RESCINDIDO) {
+            estagio.setStatusEstagio(StatusEstagio.RESCINDIDO);
+
+            estagioRepository.save(estagio);
+        } else {
+            throw new RuntimeException("Estagio não está em analise de rescisão");
+        }
+    }
+
+    private void verificaDonoDoEstagio(Estagio estagio, Usuario usuarioLogado){
+        if (usuarioLogado.getRole() != Role.ROLE_ALUNO) {
+            throw new AccessDeniedException("Apenas o aluno pode solicitar esta ação.");
+        }
+
+        Aluno aluno = alunoRepository.findByUsuario(usuarioLogado)
+                .orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
+
+        if (!estagio.getAluno().equals(aluno)) {
+            throw new AccessDeniedException("Você não tem permissão para alterar um estágio que não é seu.");
+        }
+    }
 }

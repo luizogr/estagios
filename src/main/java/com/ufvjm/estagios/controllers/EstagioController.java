@@ -61,4 +61,31 @@ public class EstagioController {
         return ResponseEntity.ok(novoAditivo);
     }
 
+    @PatchMapping("/{id}/concluir")
+    @PreAuthorize("hasRole('ALUNO')")
+    public ResponseEntity<Estagio> concluirEstagio(@PathVariable UUID id, @AuthenticationPrincipal Usuario usuarioLogado){
+        Estagio estagio = estagioService.concluirEstagio(id, usuarioLogado);
+        return ResponseEntity.ok(estagio);
+    }
+
+    @PatchMapping("/{id}/aprovar-conclusao")
+    @PreAuthorize("hasAnyRole('PROFESSOR', 'COORDENADOR')")
+    public ResponseEntity<Void> aprovarConclusao(@PathVariable UUID id, @AuthenticationPrincipal Usuario usuarioLogado) {
+        estagioService.aprovarConclusao(id, usuarioLogado);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/rescindir")
+    @PreAuthorize("hasRole('ALUNO')")
+    public ResponseEntity<Estagio> rescindirEstagio(@PathVariable UUID id, @AuthenticationPrincipal Usuario usuarioLogado){
+        Estagio estagio = estagioService.rescindirEstagio(id, usuarioLogado);
+        return ResponseEntity.ok(estagio);
+    }
+
+    @PatchMapping("/{id}/aprovar-rescisao")
+    @PreAuthorize("hasAnyRole('PROFESSOR', 'COORDENADOR')")
+    public ResponseEntity<Void> aprovarRescisao(@PathVariable UUID id, @AuthenticationPrincipal Usuario usuarioLogado) {
+        estagioService.aprovarRescisao(id, usuarioLogado);
+        return ResponseEntity.noContent().build();
+    }
 }

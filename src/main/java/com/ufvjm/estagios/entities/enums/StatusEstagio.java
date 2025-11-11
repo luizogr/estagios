@@ -4,5 +4,7 @@ public enum StatusEstagio {
     EM_ANALISE,
     ATIVO,
     CONCLUIDO,
-    RESCINDIDO
+    ANALISE_CONCLUIDO,
+    RESCINDIDO,
+    ANALISE_RESCINDIDO,
 }
