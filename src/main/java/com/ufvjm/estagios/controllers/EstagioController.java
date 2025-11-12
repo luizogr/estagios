@@ -2,6 +2,7 @@ package com.ufvjm.estagios.controllers;
 
 import com.ufvjm.estagios.dto.AditivoCreateDTO;
 import com.ufvjm.estagios.dto.EstagioCreateDTO;
+import com.ufvjm.estagios.dto.EstagioUpdateDTO;
 import com.ufvjm.estagios.entities.Aditivo;
 import com.ufvjm.estagios.entities.Estagio;
 import com.ufvjm.estagios.entities.Usuario;
@@ -87,5 +88,12 @@ public class EstagioController {
     public ResponseEntity<Void> aprovarRescisao(@PathVariable UUID id, @AuthenticationPrincipal Usuario usuarioLogado) {
         estagioService.aprovarRescisao(id, usuarioLogado);
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/atualizar")
+    @PreAuthorize("hasAnyRole('COORDENADOR', 'ALUNO')")
+    public ResponseEntity<Estagio> atualizarEstagio(@PathVariable UUID id, @Valid @RequestBody EstagioUpdateDTO dto, @AuthenticationPrincipal Usuario usuarioLogado) {
+        Estagio estagioAtualizado = estagioService.atualizarEstagio(id,dto, usuarioLogado);
+        return ResponseEntity.ok(estagioAtualizado);
     }
 }
