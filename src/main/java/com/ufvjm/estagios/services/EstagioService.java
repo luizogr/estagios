@@ -3,10 +3,12 @@ package com.ufvjm.estagios.services;
 import com.ufvjm.estagios.dto.AditivoCreateDTO;
 import com.ufvjm.estagios.dto.EstagioCreateDTO;
 import com.ufvjm.estagios.dto.EstagioUpdateDTO;
+import com.ufvjm.estagios.dto.RejeicaoEstagioDTO;
 import com.ufvjm.estagios.entities.*;
 import com.ufvjm.estagios.entities.enums.Role;
 import com.ufvjm.estagios.entities.enums.StatusAditivo;
 import com.ufvjm.estagios.entities.enums.StatusEstagio;
+import com.ufvjm.estagios.entities.enums.TipoNotificacao;
 import com.ufvjm.estagios.repositories.AditivoRepository;
 import com.ufvjm.estagios.repositories.AlunoRepository;
 import com.ufvjm.estagios.repositories.EstagioRepository;
@@ -35,6 +37,8 @@ public class EstagioService {
     private RelatorioService relatorioService;
     @Autowired
     private AditivoRepository aditivoRepository;
+    @Autowired
+    private NotificacaoService notificacaoService;
 
     @Transactional
     public Estagio criarEstagio(EstagioCreateDTO dto){
@@ -368,5 +372,30 @@ public class EstagioService {
             estagio.setStatusEstagio(StatusEstagio.EM_ANALISE);
             estagio.setStatusEstagio(StatusEstagio.EM_ANALISE);
         }
+    }
+
+    @Transactional
+    public void rejeitarEstagio(UUID estagioId, RejeicaoEstagioDTO dto, Usuario usuarioLogado) {
+        Estagio estagio = estagioRepository.findById(estagioId)
+                .orElseThrow(() -> new RuntimeException("Estagio não encontrado"));
+
+        boolean temPermissao = false;
+        if (usuarioLogado.getRole() == Role.ROLE_COORDENADOR) {
+            temPermissao = true;
+        } else if (usuarioLogado.getRole() == Role.ROLE_PROFESSOR) {
+            Professor professor = professorRepository.findByUsuario(usuarioLogado)
+                    .orElseThrow(() -> new RuntimeException("Perfil não encontrado"));
+            if(estagio.getOrientador().equals(professor)){
+                temPermissao = true;
+            }
+        }
+        if (!temPermissao) {
+            throw new AccessDeniedException("Usuario sem permissão");
+        }
+
+        estagio.setStatusEstagio(StatusEstagio.REJEITADO);
+        estagioRepository.save(estagio);
+
+        notificacaoService.criarNotificacao(estagio.getAluno().getUsuario(), "Estágio Rejeitado", "Motivo: " + dto.motivo(), TipoNotificacao.REJEITADO);
     }
 }

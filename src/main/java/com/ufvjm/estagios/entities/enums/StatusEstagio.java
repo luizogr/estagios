@@ -7,4 +7,5 @@ public enum StatusEstagio {
     ANALISE_CONCLUIDO,
     RESCINDIDO,
     ANALISE_RESCINDIDO,
+    REJEITADO
 }
