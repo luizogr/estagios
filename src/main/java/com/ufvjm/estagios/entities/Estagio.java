@@ -1,5 +1,6 @@
 package com.ufvjm.estagios.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.ufvjm.estagios.entities.enums.StatusEstagio;
 import jakarta.persistence.*;
 
@@ -55,9 +56,11 @@ public class Estagio {
 
     private LocalDate dataEntregaPlanoDeAtividades; // Conferir se coloca boolean
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "estagio", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Aditivo> aditivos = new ArrayList<>();
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "estagio", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Relatorio> relatorios = new ArrayList<>();
 

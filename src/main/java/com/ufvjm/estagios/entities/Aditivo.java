@@ -1,5 +1,6 @@
 package com.ufvjm.estagios.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.ufvjm.estagios.entities.enums.StatusAditivo;
 import jakarta.persistence.*;
 
@@ -15,6 +16,7 @@ public class Aditivo {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "id_estagio")
     private Estagio estagio;

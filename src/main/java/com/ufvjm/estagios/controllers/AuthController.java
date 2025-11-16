@@ -71,11 +71,11 @@ public class AuthController {
         Aluno newAluno = new Aluno();
         newAluno.setMatricula(body.matricula());
         newAluno.setUsuario(usuarioSalvo);
-        this.alunoRepository.save(newAluno);
+        Aluno aluno = this.alunoRepository.save(newAluno);
 
         // 4. Gera o token e retorna
         String token = this.tokenService.generateToken(usuarioSalvo);
-        return ResponseEntity.ok(new ResponseDTO(usuarioSalvo.getNome(), token));
+        return ResponseEntity.ok(new ResponseDTO(usuarioSalvo.getNome(), token, aluno.getId()));
     }
 
     @PostMapping("/register/professor")
@@ -97,10 +97,10 @@ public class AuthController {
         Professor newProfessor = new Professor();
         newProfessor.setSiap(body.siap());
         newProfessor.setUsuario(usuarioSalvo);
-        this.professorRepository.save(newProfessor);
+        Professor professor = this.professorRepository.save(newProfessor);
 
         // 4. Gera o token e retorna
         String token = this.tokenService.generateToken(usuarioSalvo);
-        return ResponseEntity.ok(new ResponseDTO(usuarioSalvo.getNome(), token));
+        return ResponseEntity.ok(new ResponseDTO(usuarioSalvo.getNome(), token, professor.getId()));
     }
 }

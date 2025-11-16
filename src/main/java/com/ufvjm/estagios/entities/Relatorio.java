@@ -1,5 +1,6 @@
 package com.ufvjm.estagios.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -14,6 +15,7 @@ public class Relatorio {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "id_estagio")
     private Estagio estagio;
