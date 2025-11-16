@@ -1,6 +1,7 @@
 package com.ufvjm.estagios.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.ufvjm.estagios.entities.enums.StatusRelatorio;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -23,14 +24,18 @@ public class Relatorio {
     private LocalDate dataPrevistaEntrega;
     private LocalDate dataEntregaRelatorio;
 
+    @Enumerated(EnumType.STRING)
+    private StatusRelatorio status;
+
     public Relatorio() {
     }
 
-    public Relatorio(UUID id, Estagio estagio, LocalDate dataPrevistaEntrega, LocalDate dataEntregaRelatorio) {
+    public Relatorio(UUID id, Estagio estagio, LocalDate dataPrevistaEntrega, LocalDate dataEntregaRelatorio, StatusRelatorio status) {
         this.id = id;
         this.estagio = estagio;
         this.dataPrevistaEntrega = dataPrevistaEntrega;
         this.dataEntregaRelatorio = dataEntregaRelatorio;
+        this.status = status;
     }
 
     public UUID getId() {
@@ -63,6 +68,14 @@ public class Relatorio {
 
     public void setDataEntregaRelatorio(LocalDate dataEntregaRelatorio) {
         this.dataEntregaRelatorio = dataEntregaRelatorio;
+    }
+
+    public StatusRelatorio getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusRelatorio status) {
+        this.status = status;
     }
 
     @Override

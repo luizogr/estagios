@@ -3,7 +3,7 @@ package com.ufvjm.estagios.controllers;
 import com.ufvjm.estagios.dto.AditivoCreateDTO;
 import com.ufvjm.estagios.dto.EstagioCreateDTO;
 import com.ufvjm.estagios.dto.EstagioUpdateDTO;
-import com.ufvjm.estagios.dto.RejeicaoEstagioDTO;
+import com.ufvjm.estagios.dto.RejeicaoDTO;
 import com.ufvjm.estagios.entities.Aditivo;
 import com.ufvjm.estagios.entities.Estagio;
 import com.ufvjm.estagios.entities.Usuario;
@@ -100,7 +100,7 @@ public class EstagioController {
 
     @PatchMapping("/{id}/rejeitar")
     @PreAuthorize("hasAnyRole('PROFESSOR', 'COORDENADOR')")
-    public ResponseEntity<Void> rejeitarEstagio(@PathVariable UUID id, @Valid @RequestBody RejeicaoEstagioDTO dto, @AuthenticationPrincipal Usuario usuarioLogado) {
+    public ResponseEntity<Void> rejeitarEstagio(@PathVariable UUID id, @Valid @RequestBody RejeicaoDTO dto, @AuthenticationPrincipal Usuario usuarioLogado) {
         estagioService.rejeitarEstagio(id, dto, usuarioLogado);
         return ResponseEntity.noContent().build();
     }

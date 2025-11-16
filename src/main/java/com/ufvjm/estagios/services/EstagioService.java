@@ -3,7 +3,7 @@ package com.ufvjm.estagios.services;
 import com.ufvjm.estagios.dto.AditivoCreateDTO;
 import com.ufvjm.estagios.dto.EstagioCreateDTO;
 import com.ufvjm.estagios.dto.EstagioUpdateDTO;
-import com.ufvjm.estagios.dto.RejeicaoEstagioDTO;
+import com.ufvjm.estagios.dto.RejeicaoDTO;
 import com.ufvjm.estagios.entities.*;
 import com.ufvjm.estagios.entities.enums.Role;
 import com.ufvjm.estagios.entities.enums.StatusAditivo;
@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Period;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -330,28 +329,14 @@ public class EstagioService {
     }
 
     private void aplicarAtualizacaoAluno(Estagio estagio, EstagioUpdateDTO dto) {
-        if (dto.orientadorId() != null){
-            Professor orientador = professorRepository.findById(dto.orientadorId())
-                    .orElseThrow(() -> new RuntimeException("Professor não encontrado"));
-            estagio.setOrientador(orientador);
-        }
         if (dto.concedente() != null && !dto.concedente().isBlank()) {
             estagio.setConcedente(dto.concedente());
         }
         if (dto.supervisor() != null && !dto.supervisor().isBlank()) {
             estagio.setSupervisor(dto.supervisor());
         }
-        if (dto.dataInicio() != null){
-            estagio.setDataInicio(dto.dataInicio());
-        }
-        if (dto.dataTermino() != null){
-            estagio.setDataTermino(dto.dataTermino());
-        }
         if (dto.cargaHoraria() != null){
             estagio.setCargaHorariaSemanal(dto.cargaHoraria());
-        }
-        if (dto.valorBolsa() != null){
-            estagio.setValorBolsa(dto.valorBolsa());
         }
         if (dto.auxilioTransporte() != null){
             estagio.setAuxilioTransporte(dto.auxilioTransporte());
@@ -375,7 +360,7 @@ public class EstagioService {
     }
 
     @Transactional
-    public void rejeitarEstagio(UUID estagioId, RejeicaoEstagioDTO dto, Usuario usuarioLogado) {
+    public void rejeitarEstagio(UUID estagioId, RejeicaoDTO dto, Usuario usuarioLogado) {
         Estagio estagio = estagioRepository.findById(estagioId)
                 .orElseThrow(() -> new RuntimeException("Estagio não encontrado"));
 
