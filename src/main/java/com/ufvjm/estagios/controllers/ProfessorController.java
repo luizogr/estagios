@@ -1,7 +1,9 @@
 package com.ufvjm.estagios.controllers;
 
+import com.ufvjm.estagios.dto.ProfessorRegisterDTO;
 import com.ufvjm.estagios.dto.ProfessorSimpleDTO;
 import com.ufvjm.estagios.entities.Estagio;
+import com.ufvjm.estagios.entities.Professor;
 import com.ufvjm.estagios.entities.Usuario;
 import com.ufvjm.estagios.services.EstagioService;
 import com.ufvjm.estagios.services.ProfessorService;
@@ -9,10 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -37,5 +38,15 @@ public class ProfessorController {
     public ResponseEntity<List<Estagio>> getMeusEstagios(@AuthenticationPrincipal Usuario usuarioLogado) {
         List<Estagio> listaEstagios = estagioService.findEstagiosByProfessor(usuarioLogado);
         return ResponseEntity.ok(listaEstagios);
+    }
+
+    @PostMapping
+    @PreAuthorize("hasRole('COORDENADOR')")
+    public ResponseEntity<Professor> cadastrarProfessor(@RequestBody ProfessorRegisterDTO dto) {
+        Professor novoProfessor = professorService.registerProfessor(dto);
+
+        // Retorna 201 Created e o objeto criado (sem token!)
+        URI uri = URI.create("/api/professores/" + novoProfessor.getId());
+        return ResponseEntity.created(uri).body(novoProfessor);
     }
 }
