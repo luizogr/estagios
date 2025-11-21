@@ -60,6 +60,13 @@ public class AditivoService {
             aditivo.setStatus(StatusAditivo.APROVADO);
 
             aditivoRepository.save(aditivo);
+
+            notificacaoService.criarNotificacao(
+                    aditivo.getEstagio().getAluno().getUsuario(),
+                    "Notificação de Prorrogação",
+                    "Seu estágio foi prorrogado até " + aditivo.getNovaDataTermino().toString() + ".",
+                    TipoNotificacao.PRORROGACAO
+            );
         } else {
             throw new RuntimeException("Aditivo não está em analise");
         }

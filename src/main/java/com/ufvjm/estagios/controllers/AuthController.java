@@ -70,6 +70,7 @@ public class AuthController {
         newUsuario.setEmailInstitucional(body.emailInstitucional());
         newUsuario.setNome(body.nome());
         newUsuario.setRole(Role.ROLE_ALUNO);
+        newUsuario.setAtivo(false);
         Usuario usuarioSalvo = this.repository.save(newUsuario); // Salva e recupera com o ID
 
         // 3. Cria a entidade Aluno e liga ao Usuario

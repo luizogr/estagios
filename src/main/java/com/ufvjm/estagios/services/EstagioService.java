@@ -1,14 +1,8 @@
 package com.ufvjm.estagios.services;
 
-import com.ufvjm.estagios.dto.AditivoCreateDTO;
-import com.ufvjm.estagios.dto.EstagioCreateDTO;
-import com.ufvjm.estagios.dto.EstagioUpdateDTO;
-import com.ufvjm.estagios.dto.RejeicaoDTO;
+import com.ufvjm.estagios.dto.*;
 import com.ufvjm.estagios.entities.*;
-import com.ufvjm.estagios.entities.enums.Role;
-import com.ufvjm.estagios.entities.enums.StatusAditivo;
-import com.ufvjm.estagios.entities.enums.StatusEstagio;
-import com.ufvjm.estagios.entities.enums.TipoNotificacao;
+import com.ufvjm.estagios.entities.enums.*;
 import com.ufvjm.estagios.repositories.AditivoRepository;
 import com.ufvjm.estagios.repositories.AlunoRepository;
 import com.ufvjm.estagios.repositories.EstagioRepository;
@@ -19,7 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import java.time.LocalDate;
 import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 
@@ -106,13 +102,26 @@ public class EstagioService {
             estagio.setStatusEstagio(StatusEstagio.ATIVO);
 
             estagioRepository.save(estagio);
+
+            String nomeProfessor = professorRepository.findByUsuario(usuarioLogado)
+                    .orElseThrow(() -> new RuntimeException("Professor não encontrado"))
+                    .getUsuario().getNome();
+
+            notificacaoService.criarNotificacao(
+                    estagio.getAluno().getUsuario(),
+                    "Estágio Aprovado",
+                    "Seu estágio foi aprovado pelo Professor " + nomeProfessor + ".",
+                    TipoNotificacao.APROVADO
+            );
         } else {
             throw new RuntimeException("Estagio não está em analise");
         }
+
+        notificacaoService.criarNotificacao(estagio.getAluno().getUsuario(), "Estágio aprovado", "Seu estágio foi aprovado", TipoNotificacao.APROVADO);
     }
 
     public List<Estagio> listarTodosEstagios(){
-        return estagioRepository.findAll();
+        return estagioRepository.findAllSortedByNextReportDate();
     }
 
     public Estagio getEstagioById(UUID estagioId, Usuario usuarioLogado){
@@ -138,16 +147,20 @@ public class EstagioService {
         throw new AccessDeniedException("Você não tem permissão para ver este estagio");
     }
 
-    public List<Estagio> findEstagiosByAluno(Usuario usuarioLogado){
+    public List<EstagioResponseDTO> findEstagiosByAluno(Usuario usuarioLogado){
         Aluno aluno = alunoRepository.findByUsuario(usuarioLogado)
                 .orElseThrow(() -> new RuntimeException("Perfil não encontrado"));
-        return estagioRepository.findByAluno(aluno);
+        List<Estagio> estagios = estagioRepository.findByAluno(aluno);
+
+        return estagios.stream()
+                .map(this::converterParaDTO)
+                .toList();
     }
 
     public List<Estagio> findEstagiosByProfessor(Usuario usuarioLogado){
         Professor professor = professorRepository.findByUsuario(usuarioLogado)
                 .orElseThrow(() -> new RuntimeException("Perfil não encontrado"));
-        return estagioRepository.findByOrientador(professor);
+        return estagioRepository.findEstagiosByProfessorUsuarioSortedByNextReportDate(usuarioLogado);
     }
 
     @Transactional
@@ -211,6 +224,8 @@ public class EstagioService {
         } else {
             throw new RuntimeException("Estagio não está em analise de conclusão");
         }
+
+        notificacaoService.criarNotificacao(estagio.getAluno().getUsuario(), "Conclusão aprovada", "Sua conclusão foi aprovada", TipoNotificacao.APROVADO);
     }
 
     @Transactional
@@ -254,6 +269,8 @@ public class EstagioService {
         } else {
             throw new RuntimeException("Estagio não está em analise de rescisão");
         }
+
+        notificacaoService.criarNotificacao(estagio.getAluno().getUsuario(), "Recisão aprovada", "Sua recisão foi aprovada", TipoNotificacao.APROVADO);
     }
 
     private void verificaDonoDoEstagio(Estagio estagio, Usuario usuarioLogado){
@@ -382,5 +399,82 @@ public class EstagioService {
         estagioRepository.save(estagio);
 
         notificacaoService.criarNotificacao(estagio.getAluno().getUsuario(), "Estágio Rejeitado", "Motivo: " + dto.motivo(), TipoNotificacao.REJEITADO);
+    }
+
+    private RelatorioResponseDTO converterRelatorioParaDTO(Relatorio relatorio) {
+
+        // Se estiver APROVADO, ele já está concluído.
+        if (relatorio.getStatus() == StatusRelatorio.APROVADO) {
+            return new RelatorioResponseDTO(
+                    relatorio.getId(), "Relatório", relatorio.getDataPrevistaEntrega(), relatorio.getDataEntregaRelatorio(),
+                    "Entregue", "verde"
+            );
+        }
+
+        // Se estiver em ANÁLISE, ele está com o Professor.
+        if (relatorio.getStatus() == StatusRelatorio.EM_ANALISE) {
+            return new RelatorioResponseDTO(
+                    relatorio.getId(), "Relatório", relatorio.getDataPrevistaEntrega(), relatorio.getDataEntregaRelatorio(),
+                    "Em Análise", "azul"
+            );
+        }
+
+        // Se estiver REJEITADO, é uma pendência vermelha.
+        if (relatorio.getStatus() == StatusRelatorio.REJEITADO) {
+            return new RelatorioResponseDTO(
+                    relatorio.getId(), "Relatório", relatorio.getDataPrevistaEntrega(), relatorio.getDataEntregaRelatorio(),
+                    "Rejeitado", "vermelho"
+            );
+        }
+
+        long diasAteVencimento = ChronoUnit.DAYS.between(LocalDate.now(), relatorio.getDataPrevistaEntrega());
+        if (diasAteVencimento < 0) {
+            return new RelatorioResponseDTO(
+                    relatorio.getId(), "Relatório", relatorio.getDataPrevistaEntrega(), relatorio.getDataEntregaRelatorio(),
+                    "Atrasado", "vermelho"
+            );
+        } else if (diasAteVencimento <= 7) {
+            return new RelatorioResponseDTO(
+                    relatorio.getId(), "Relatório", relatorio.getDataPrevistaEntrega(), relatorio.getDataEntregaRelatorio(),
+                    diasAteVencimento + " dias", "amarelo"
+            );
+        } else if (diasAteVencimento <= 15) {
+            return new RelatorioResponseDTO(
+                    relatorio.getId(), "Relatório", relatorio.getDataPrevistaEntrega(), relatorio.getDataEntregaRelatorio(),
+                    diasAteVencimento + " dias", "laranja"
+            );
+        }
+
+        // Default: Pendente, mas com prazo distante
+        return new RelatorioResponseDTO(
+                relatorio.getId(), "Relatório", relatorio.getDataPrevistaEntrega(), relatorio.getDataEntregaRelatorio(),
+                "Pendente", "cinza"
+        );
+    }
+
+    private EstagioResponseDTO converterParaDTO(Estagio estagio) {
+        // Mapear e calcular o status de todos os relatórios
+        List<RelatorioResponseDTO> relatoriosDTO = estagio.getRelatorios().stream()
+                .map(this::converterRelatorioParaDTO)
+                .toList();
+
+        // Retornar o EstagioResponseDTO com dados achatados
+        return new EstagioResponseDTO(
+                estagio.getId(),
+                estagio.getAluno().getUsuario().getNome(),
+                estagio.getOrientador().getUsuario().getNome(),
+                estagio.getConcedente(),
+                estagio.getSupervisor(),
+                estagio.getDataInicio(),
+                estagio.getDataTermino(),
+                estagio.getCargaHorariaSemanal(),
+                estagio.getValorBolsa(),
+                estagio.getAuxilioTransporte(),
+                estagio.getValorAuxilioTransporte(),
+                estagio.getSeguro(),
+                estagio.getDataEntregaTCE(),
+                estagio.getDataEntregaPlanoDeAtividades(),
+                relatoriosDTO
+        );
     }
 }

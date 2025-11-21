@@ -1,5 +1,6 @@
 package com.ufvjm.estagios.controllers;
 
+import com.ufvjm.estagios.dto.EstagioResponseDTO;
 import com.ufvjm.estagios.entities.Estagio;
 import com.ufvjm.estagios.entities.Usuario;
 import com.ufvjm.estagios.services.EstagioService;
@@ -22,8 +23,8 @@ public class AlunoController {
 
     @GetMapping("/meus-estagios")
     @PreAuthorize("hasRole('ALUNO')")
-    public ResponseEntity<List<Estagio>> getMeusEstagios(@AuthenticationPrincipal Usuario usuarioLogado) {
-        List<Estagio> listaEstagios = estagioService.findEstagiosByAluno(usuarioLogado);
+    public ResponseEntity<List<EstagioResponseDTO>> getMeusEstagios(@AuthenticationPrincipal Usuario usuarioLogado) {
+        List<EstagioResponseDTO> listaEstagios = estagioService.findEstagiosByAluno(usuarioLogado);
         return ResponseEntity.ok(listaEstagios);
     }
 
