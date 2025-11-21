@@ -29,6 +29,8 @@ public class Usuario {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    private boolean ativo = false;
+
     public Usuario() {
     }
 
@@ -78,6 +80,14 @@ public class Usuario {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public boolean isAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
     }
 
     @Override

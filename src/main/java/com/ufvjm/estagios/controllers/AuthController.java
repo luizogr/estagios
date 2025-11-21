@@ -3,20 +3,21 @@ package com.ufvjm.estagios.controllers;
 import com.ufvjm.estagios.dto.*;
 import com.ufvjm.estagios.entities.Aluno;
 import com.ufvjm.estagios.entities.Professor;
+import com.ufvjm.estagios.entities.TokenVerificacao;
 import com.ufvjm.estagios.entities.Usuario;
 import com.ufvjm.estagios.entities.enums.Role;
 import com.ufvjm.estagios.infra.security.TokenService;
 import com.ufvjm.estagios.repositories.AlunoRepository;
 import com.ufvjm.estagios.repositories.ProfessorRepository;
+import com.ufvjm.estagios.repositories.TokenVerificacaoRepository;
 import com.ufvjm.estagios.repositories.UsuarioRepository;
+import com.ufvjm.estagios.services.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RestController
@@ -33,6 +34,10 @@ public class AuthController {
     private final AlunoRepository alunoRepository;
     @Autowired
     private final ProfessorRepository professorRepository;
+    @Autowired
+    private TokenVerificacaoRepository tokenVerificacaoRepository;
+    @Autowired
+    private EmailService emailService;
 
     public AuthController(UsuarioRepository repository, PasswordEncoder passwordEncoder, TokenService tokenService, AlunoRepository alunoRepository, ProfessorRepository professorRepository) {
         this.repository = repository;
@@ -73,8 +78,31 @@ public class AuthController {
         newAluno.setUsuario(usuarioSalvo);
         Aluno aluno = this.alunoRepository.save(newAluno);
 
+        TokenVerificacao tokenVerificacao = new TokenVerificacao(usuarioSalvo);
+        tokenVerificacaoRepository.save(tokenVerificacao);
+
         // 4. Gera o token e retorna
-        String token = this.tokenService.generateToken(usuarioSalvo);
-        return ResponseEntity.ok(new ResponseDTO(usuarioSalvo.getNome(), token, aluno.getId()));
+        emailService.enviarEmailConfirmacao(usuarioSalvo.getEmailInstitucional(), tokenVerificacao.getToken());
+
+        return ResponseEntity.ok("Cadastro realizado! Verifique seu e-mail para ativar.");
+    }
+
+    @GetMapping("/confirmar")
+    public ResponseEntity<String> confirmarEmail(@RequestParam("token") String token) {
+        // 1. Busca o token no banco
+        TokenVerificacao tokenVerificacao = tokenVerificacaoRepository.findByToken(token)
+                .orElseThrow(() -> new RuntimeException("Token inválido"));
+
+        // 2. Verifica se expirou
+        if (tokenVerificacao.getDataExpiracao().isBefore(LocalDateTime.now())) {
+            return ResponseEntity.badRequest().body("Token expirado.");
+        }
+
+        // 3. Ativa o usuário
+        Usuario usuario = tokenVerificacao.getUsuario();
+        usuario.setAtivo(true);
+        repository.save(usuario);
+
+        return ResponseEntity.ok("Conta ativada com sucesso! Agora você pode fazer login.");
     }
 }

@@ -22,6 +22,10 @@ public class CustomUserDetailService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Usuario usuario = this.repository.findByEmailInstitucional(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
+        if (!usuario.isAtivo()) {
+            throw new UsernameNotFoundException("Usuário não ativado. Verifique seu e-mail.");
+        }
+
         var authorities = Collections.singletonList(new SimpleGrantedAuthority(usuario.getRole().name()));
 
         return new User(usuario.getEmailInstitucional(), usuario.getSenha(), authorities);
