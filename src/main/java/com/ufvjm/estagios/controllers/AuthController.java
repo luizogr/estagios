@@ -13,7 +13,9 @@ import com.ufvjm.estagios.repositories.TokenVerificacaoRepository;
 import com.ufvjm.estagios.repositories.UsuarioRepository;
 import com.ufvjm.estagios.services.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,6 +41,9 @@ public class AuthController {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
     public AuthController(UsuarioRepository repository, PasswordEncoder passwordEncoder, TokenService tokenService, AlunoRepository alunoRepository, ProfessorRepository professorRepository) {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
@@ -50,6 +55,12 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody LoginRequestDTO body){
         Usuario usuario = this.repository.findByEmailInstitucional(body.emailInstitucional()).orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!usuario.isAtivo()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Usuário não ativado. Verifique seu e-mail.");
+        }
+
         if(passwordEncoder.matches(body.password(), usuario.getSenha())) {
             String token = this.tokenService.generateToken(usuario);
             return ResponseEntity.ok(new ResponseDTO(usuario.getNome(), token));//Ver quais informações o front vai precisar

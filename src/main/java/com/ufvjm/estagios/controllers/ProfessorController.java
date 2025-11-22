@@ -1,5 +1,6 @@
 package com.ufvjm.estagios.controllers;
 
+import com.ufvjm.estagios.dto.EstagioResponseDTO;
 import com.ufvjm.estagios.dto.ProfessorRegisterDTO;
 import com.ufvjm.estagios.dto.ProfessorSimpleDTO;
 import com.ufvjm.estagios.entities.Estagio;
@@ -40,7 +41,7 @@ public class ProfessorController {
         return ResponseEntity.ok(listaEstagios);
     }
 
-    @PostMapping
+    @PostMapping("/cadastrar")
     @PreAuthorize("hasRole('COORDENADOR')")
     public ResponseEntity<Professor> cadastrarProfessor(@RequestBody ProfessorRegisterDTO dto) {
         Professor novoProfessor = professorService.registerProfessor(dto);
@@ -48,5 +49,14 @@ public class ProfessorController {
         // Retorna 201 Created e o objeto criado (sem token!)
         URI uri = URI.create("/api/professores/" + novoProfessor.getId());
         return ResponseEntity.created(uri).body(novoProfessor);
+    }
+
+    @GetMapping
+    @PreAuthorize("hasAnyRole('COORDENADOR', 'PROFESSOR')")
+    public ResponseEntity<List<EstagioResponseDTO>> listarEstagiosDashboard(
+            @AuthenticationPrincipal Usuario usuarioLogado
+    ) {
+        List<EstagioResponseDTO> lista = estagioService.listarEstagiosDashboard(usuarioLogado);
+        return ResponseEntity.ok(lista);
     }
 }

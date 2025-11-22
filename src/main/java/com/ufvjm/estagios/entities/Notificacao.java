@@ -1,5 +1,6 @@
 package com.ufvjm.estagios.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ufvjm.estagios.entities.enums.TipoNotificacao;
 import jakarta.persistence.*;
 
@@ -14,6 +15,7 @@ public class Notificacao {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "destinatario_id")
     private Usuario destinatario;

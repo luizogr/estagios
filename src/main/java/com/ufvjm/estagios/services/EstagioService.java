@@ -18,6 +18,7 @@ import java.time.Period;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class EstagioService {
@@ -124,23 +125,23 @@ public class EstagioService {
         return estagioRepository.findAllSortedByNextReportDate();
     }
 
-    public Estagio getEstagioById(UUID estagioId, Usuario usuarioLogado){
+    public EstagioResponseDTO getEstagioById(UUID estagioId, Usuario usuarioLogado){
         Estagio estagio = estagioRepository.findById(estagioId)
                 .orElseThrow(() -> new RuntimeException("Estagio não encontrado"));
 
         if  (usuarioLogado.getRole() == Role.ROLE_COORDENADOR) {
-            return estagio;
+            return converterParaDTO(estagio);
         }
 
         if  (usuarioLogado.getRole() == Role.ROLE_PROFESSOR) {
-            return estagio;
+            return converterParaDTO(estagio);
         }
 
         if (usuarioLogado.getRole() == Role.ROLE_ALUNO) {
             Aluno aluno = alunoRepository.findByUsuario(usuarioLogado)
                     .orElseThrow(() -> new RuntimeException("Perfil não encontrado"));
             if (estagio.getAluno().equals(aluno)) {
-                return estagio;
+                return converterParaDTO(estagio);
             }
         }
 
@@ -476,5 +477,13 @@ public class EstagioService {
                 estagio.getDataEntregaPlanoDeAtividades(),
                 relatoriosDTO
         );
+    }
+
+    public List<EstagioResponseDTO> listarEstagiosDashboard(Usuario usuarioLogado) {
+        List<Estagio> estagios = estagioRepository.findAllSortedByNextReportDate();
+
+        return estagios.stream()
+                .map(this::converterParaDTO)
+                .collect(Collectors.toList());
     }
 }

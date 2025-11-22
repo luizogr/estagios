@@ -3,6 +3,7 @@ package com.ufvjm.estagios.entities;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ufvjm.estagios.entities.enums.Role;
 import jakarta.persistence.*;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serial;
 import java.util.Objects;
@@ -10,7 +11,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "tb_usuarios")
-public class Usuario {
+public class Usuario{
     @Serial
     private static final long serialVersionUID = 1L;
 

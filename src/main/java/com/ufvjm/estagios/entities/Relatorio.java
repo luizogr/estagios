@@ -24,6 +24,7 @@ public class Relatorio {
     private LocalDate dataPrevistaEntrega;
     private LocalDate dataEntregaRelatorio;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private StatusRelatorio status;
 
