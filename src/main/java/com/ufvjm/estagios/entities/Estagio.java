@@ -64,6 +64,10 @@ public class Estagio {
     @OneToMany(mappedBy = "estagio", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Relatorio> relatorios = new ArrayList<>();
 
+    private Boolean efetivado;
+
+    private String motivoConclusao;
+
     public Estagio() {
     }
 
@@ -221,6 +225,22 @@ public class Estagio {
 
     public void setRelatorios(List<Relatorio> relatorios) {
         this.relatorios = relatorios;
+    }
+
+    public Boolean getEfetivado() {
+        return efetivado;
+    }
+
+    public void setEfetivado(Boolean efetivado) {
+        this.efetivado = efetivado;
+    }
+
+    public String getMotivoConclusao() {
+        return motivoConclusao;
+    }
+
+    public void setMotivoConclusao(String motivoConclusao) {
+        this.motivoConclusao = motivoConclusao;
     }
 
     @Override

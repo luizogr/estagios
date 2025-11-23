@@ -2,6 +2,7 @@ package com.ufvjm.estagios.repositories;
 
 import com.ufvjm.estagios.entities.Estagio;
 import com.ufvjm.estagios.entities.Relatorio;
+import com.ufvjm.estagios.entities.enums.StatusRelatorio;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -22,4 +23,6 @@ public interface RelatorioRepository extends JpaRepository<Relatorio, UUID> {
             @Param("dataInicio") LocalDate dataInicio,
             @Param("dataFim") LocalDate dataFim
     );
+
+    List<Relatorio> findByStatusAndDataPrevistaEntregaBefore(StatusRelatorio status, LocalDate data);
 }

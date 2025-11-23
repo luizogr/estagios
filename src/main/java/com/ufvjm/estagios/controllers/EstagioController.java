@@ -62,8 +62,8 @@ public class EstagioController {
 
     @PatchMapping("/{id}/concluir")
     @PreAuthorize("hasRole('ALUNO')")
-    public ResponseEntity<Estagio> concluirEstagio(@PathVariable UUID id, @AuthenticationPrincipal Usuario usuarioLogado){
-        Estagio estagio = estagioService.concluirEstagio(id, usuarioLogado);
+    public ResponseEntity<Estagio> concluirEstagio(@PathVariable UUID id, @AuthenticationPrincipal Usuario usuarioLogado, @Valid @RequestBody ConclusaoPropostaDTO dto){
+        Estagio estagio = estagioService.concluirEstagio(id, usuarioLogado, dto);
         return ResponseEntity.ok(estagio);
     }
 

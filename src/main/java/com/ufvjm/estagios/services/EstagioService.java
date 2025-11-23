@@ -74,6 +74,13 @@ public class EstagioService {
         Estagio estagioSalvo = estagioRepository.save(novoEstagio);
 
         relatorioService.gerarPrimeiroRelatorio(estagioSalvo);
+
+        notificacaoService.criarNotificacao(
+                orientador.getUsuario(),
+                "Novo Estágio Pendente",
+                "O aluno " + aluno.getUsuario().getNome() + " submeteu um novo estágio para sua análise. Status: EM_ANALISE.",
+                TipoNotificacao.PENDENCIA);
+
         return estagioSalvo;
     }
 
@@ -117,8 +124,6 @@ public class EstagioService {
         } else {
             throw new RuntimeException("Estagio não está em analise");
         }
-
-        notificacaoService.criarNotificacao(estagio.getAluno().getUsuario(), "Estágio aprovado", "Seu estágio foi aprovado", TipoNotificacao.APROVADO);
     }
 
     public List<Estagio> listarTodosEstagios(){
@@ -181,15 +186,29 @@ public class EstagioService {
         aditivo.setStatus(StatusAditivo.EM_ANALISE);
         aditivo.setEstagio(estagio);
 
+        notificacaoService.criarNotificacao(
+                estagio.getOrientador().getUsuario(), // Acessa o orientador do Estágio
+                "Aditivo Pendente de Aprovação",
+                "O aluno " + estagio.getAluno().getUsuario().getNome() + " submeteu uma proposta de Termo Aditivo para o estágio " + estagio.getId() + ".",
+                TipoNotificacao.PENDENCIA
+        );
+
         return aditivoRepository.save(aditivo);
     }
 
     @Transactional
-    public Estagio concluirEstagio(UUID estagioId, Usuario usuarioLogado) {
+    public Estagio concluirEstagio(UUID estagioId, Usuario usuarioLogado, ConclusaoPropostaDTO dto) {
         Estagio estagio = estagioRepository.findById(estagioId)
                 .orElseThrow(() -> new RuntimeException("Estagio não encontrado"));
 
         verificaDonoDoEstagio(estagio, usuarioLogado);
+
+        if (estagio.getStatusEstagio() != StatusEstagio.ATIVO) {
+            throw new RuntimeException("O estágio precisa estar ativo para ser concluído.");
+        }
+
+        estagio.setEfetivado(dto.efetivado());
+        estagio.setMotivoConclusao(dto.motivo());
 
         estagio.setStatusEstagio(StatusEstagio.ANALISE_CONCLUIDO);
 
