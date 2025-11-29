@@ -31,3 +31,8 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Arquivos de configuração de ambiente com senhas
+.env
+.env.local
+*.env

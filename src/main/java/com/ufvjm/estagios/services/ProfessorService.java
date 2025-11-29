@@ -6,6 +6,8 @@ import com.ufvjm.estagios.dto.ResponseDTO;
 import com.ufvjm.estagios.entities.Professor;
 import com.ufvjm.estagios.entities.Usuario;
 import com.ufvjm.estagios.entities.enums.Role;
+import com.ufvjm.estagios.entities.enums.StatusEstagio;
+import com.ufvjm.estagios.repositories.EstagioRepository;
 import com.ufvjm.estagios.repositories.ProfessorRepository;
 import com.ufvjm.estagios.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,15 +33,29 @@ public class ProfessorService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private EstagioRepository estagioRepository;
+
     public List<ProfessorSimpleDTO> getListaProfessores() {
 
         List<Professor> professores = professorRepository.findAll();
 
+
+
         return professores.stream()
-                .map(professor -> new ProfessorSimpleDTO(
-                        professor.getId(),
-                        professor.getUsuario().getNome() // Pega o nome do usuário associado
-                ))
+                .map(professor -> {
+                    long totalAtivos = estagioRepository.findByOrientador(professor).stream()
+                            .filter(e -> e.getStatusEstagio() == StatusEstagio.ATIVO)
+                            .count();
+
+                    return new ProfessorSimpleDTO(
+                            professor.getId(),
+                            professor.getUsuario().getNome(),
+                            professor.getUsuario().getEmailInstitucional(),
+                            professor.getSiap(),
+                            (int) totalAtivos
+                    );
+                })
                 .collect(Collectors.toList());
     }
 
