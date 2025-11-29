@@ -31,7 +31,7 @@ public class Estagio {
 
     private String supervisor;
 
-    // Adicionar formação do supervisor
+    private String formacaoSupervisor;
 
     private LocalDate dataInicio;
 
@@ -241,6 +241,14 @@ public class Estagio {
 
     public void setMotivoConclusao(String motivoConclusao) {
         this.motivoConclusao = motivoConclusao;
+    }
+
+    public String getFormacaoSupervisor() {
+        return formacaoSupervisor;
+    }
+
+    public void setFormacaoSupervisor(String formacaoSupervisor) {
+        this.formacaoSupervisor = formacaoSupervisor;
     }
 
     @Override

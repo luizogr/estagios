@@ -59,6 +59,7 @@ public class EstagioService {
         novoEstagio.setOrientador(orientador);
         novoEstagio.setConcedente(dto.concedente());
         novoEstagio.setSupervisor(dto.supervisor());
+        novoEstagio.setFormacaoSupervisor(dto.formacaoSupervisor());
         novoEstagio.setDataInicio(dto.dataInicio());
         novoEstagio.setDataTermino(dto.dataTermino());
         novoEstagio.setCargaHorariaSemanal(dto.cargaHoraria());
@@ -336,6 +337,9 @@ public class EstagioService {
         if (dto.supervisor() != null && !dto.supervisor().isBlank()) {
             estagio.setSupervisor(dto.supervisor());
         }
+        if (dto.formacaoSupervisor() != null && !dto.formacaoSupervisor().isBlank()) {
+            estagio.setFormacaoSupervisor(dto.formacaoSupervisor());
+        }
         if (dto.dataInicio() != null){
             estagio.setDataInicio(dto.dataInicio());
         }
@@ -371,6 +375,9 @@ public class EstagioService {
         }
         if (dto.supervisor() != null && !dto.supervisor().isBlank()) {
             estagio.setSupervisor(dto.supervisor());
+        }
+        if (dto.formacaoSupervisor() != null && !dto.formacaoSupervisor().isBlank()) {
+            estagio.setFormacaoSupervisor(dto.formacaoSupervisor());
         }
         if (dto.cargaHoraria() != null){
             estagio.setCargaHorariaSemanal(dto.cargaHoraria());
@@ -472,19 +479,37 @@ public class EstagioService {
         );
     }
 
+    private AditivoResponseDTO converterAditivoParaDTO(Aditivo aditivo) {
+
+        String descricao = "Aditivo - " + aditivo.getNovaDataTermino().toString();
+
+        return new AditivoResponseDTO(
+                aditivo.getId(),
+                aditivo.getNovaDataTermino(),
+                aditivo.getStatus(),
+                descricao
+        );
+    }
+
     private EstagioResponseDTO converterParaDTO(Estagio estagio) {
         // Mapear e calcular o status de todos os relatórios
         List<RelatorioResponseDTO> relatoriosDTO = estagio.getRelatorios().stream()
                 .map(this::converterRelatorioParaDTO)
                 .toList();
 
+        List<AditivoResponseDTO> aditivosDTO = estagio.getAditivos().stream()
+                .map(this::converterAditivoParaDTO)
+                .toList();
+
         // Retornar o EstagioResponseDTO com dados achatados
         return new EstagioResponseDTO(
                 estagio.getId(),
+                estagio.getStatusEstagio(),
                 estagio.getAluno().getUsuario().getNome(),
                 estagio.getOrientador().getUsuario().getNome(),
                 estagio.getConcedente(),
                 estagio.getSupervisor(),
+                estagio.getFormacaoSupervisor(),
                 estagio.getDataInicio(),
                 estagio.getDataTermino(),
                 estagio.getCargaHorariaSemanal(),
@@ -494,7 +519,8 @@ public class EstagioService {
                 estagio.getSeguro(),
                 estagio.getDataEntregaTCE(),
                 estagio.getDataEntregaPlanoDeAtividades(),
-                relatoriosDTO
+                relatoriosDTO,
+                aditivosDTO
         );
     }
 

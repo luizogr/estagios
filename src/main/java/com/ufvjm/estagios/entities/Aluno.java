@@ -19,7 +19,7 @@ public class Aluno implements Serializable {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(unique = true)
+    @Column(unique = true, length = 11)
     private String matricula;
 
     @OneToOne(fetch = FetchType.LAZY)

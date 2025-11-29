@@ -18,7 +18,7 @@ public class Professor {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(unique = true)
+    @Column(unique = true, length = 7)
     private String siap;
 
     @OneToOne(fetch = FetchType.LAZY)
