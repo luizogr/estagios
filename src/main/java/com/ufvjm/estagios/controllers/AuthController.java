@@ -73,7 +73,7 @@ public class AuthController {
                 profileId = alunoRepository.findByUsuario(usuario)
                         .map(Aluno::getId)
                         .orElse(null);
-            } else if (usuario.getRole() == Role.ROLE_PROFESSOR) {
+            } else if (usuario.getRole() == Role.ROLE_PROFESSOR || usuario.getRole() == Role.ROLE_COORDENADOR) {
                 profileId = professorRepository.findByUsuario(usuario)
                         .map(Professor::getId)
                         .orElse(null);

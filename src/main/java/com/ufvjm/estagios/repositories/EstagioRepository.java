@@ -37,6 +37,7 @@ public interface EstagioRepository extends JpaRepository<Estagio, UUID> {
     @Query("SELECT e FROM Estagio e " +
             "LEFT JOIN e.relatorios r " +
             "WHERE r.status = 'PENDENTE' OR r.status = 'EM_ANALISE' " + // Considera relatórios não finalizados
+            "GROUP BY e " +
             "ORDER BY MIN(r.dataPrevistaEntrega) ASC")
     List<Estagio> findAllSortedByNextReportDate();
 
