@@ -18,7 +18,7 @@ public class Professor {
     private UUID id;
 
     @Column(unique = true, length = 7)
-    private String siape;
+    private String siap;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", referencedColumnName = "id")
@@ -28,9 +28,9 @@ public class Professor {
     public Professor() {
     }
 
-    public Professor(UUID id, String siape, Usuario usuario) {
+    public Professor(UUID id, String siap, Usuario usuario) {
         this.id = id;
-        this.siape = siape;
+        this.siap = siap;
         this.usuario = usuario;
     }
 
@@ -42,12 +42,12 @@ public class Professor {
         return id;
     }
 
-    public String getSiape() {
-        return siape;
+    public String getSiap() {
+        return siap;
     }
 
-    public void setSiape(String siap) {
-        this.siape = siap;
+    public void setSiap(String siap) {
+        this.siap = siap;
     }
 
     public Usuario getUsuario() {

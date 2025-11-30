@@ -48,7 +48,7 @@ public class ProfessorService {
                             professor.getId(),
                             professor.getUsuario().getNome(),
                             professor.getUsuario().getEmailInstitucional(),
-                            professor.getSiape(),
+                            professor.getSiap(),
                             (int) totalAtivos
                     );
                 })
@@ -72,7 +72,7 @@ public class ProfessorService {
 
         // 3. Cria a entidade Professor e liga ao Usuario
         Professor newProfessor = new Professor();
-        newProfessor.setSiape(body.siap());
+        newProfessor.setSiap(body.siap());
         newProfessor.setUsuario(usuarioSalvo);
         //Professor professor = this.professorRepository.save(newProfessor);
 
