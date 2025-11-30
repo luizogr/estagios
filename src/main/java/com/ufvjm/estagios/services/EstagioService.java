@@ -3,10 +3,7 @@ package com.ufvjm.estagios.services;
 import com.ufvjm.estagios.dto.*;
 import com.ufvjm.estagios.entities.*;
 import com.ufvjm.estagios.entities.enums.*;
-import com.ufvjm.estagios.repositories.AditivoRepository;
-import com.ufvjm.estagios.repositories.AlunoRepository;
-import com.ufvjm.estagios.repositories.EstagioRepository;
-import com.ufvjm.estagios.repositories.ProfessorRepository;
+import com.ufvjm.estagios.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -35,6 +32,8 @@ public class EstagioService {
     private AditivoRepository aditivoRepository;
     @Autowired
     private NotificacaoService notificacaoService;
+    @Autowired
+    private RelatorioRepository relatorioRepository;
 
     @Transactional
     public Estagio criarEstagio(EstagioCreateDTO dto){
@@ -531,5 +530,50 @@ public class EstagioService {
         return estagios.stream()
                 .map(this::converterParaDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public DashboardPendenciasDTO getPendenciasDashboard(Usuario usuarioLogado) {
+
+        List<Estagio> estagiosPendentes;
+        List<Estagio> conclusoesPendentes;
+        List<Aditivo> aditivosPendentes;
+        List<Relatorio> relatoriosPendentes;
+        List<Estagio> rescisoesPendentes;
+
+        // 1. Lógica para COORDENADOR (Vê tudo)
+        if (usuarioLogado.getRole() == Role.ROLE_COORDENADOR) {
+            estagiosPendentes = estagioRepository.findByStatusEstagio(StatusEstagio.EM_ANALISE);
+            conclusoesPendentes = estagioRepository.findByStatusEstagio(StatusEstagio.ANALISE_CONCLUIDO);
+            rescisoesPendentes = estagioRepository.findByStatusEstagio(StatusEstagio.ANALISE_RESCINDIDO);
+
+            // Precisamos de métodos no repo para buscar todos com status EM_ANALISE
+            aditivosPendentes = aditivoRepository.findByStatus(StatusAditivo.EM_ANALISE);
+            relatoriosPendentes = relatorioRepository.findByStatus(StatusRelatorio.EM_ANALISE);
+        }
+        // 2. Lógica para PROFESSOR (Vê apenas os seus orientandos)
+        else if (usuarioLogado.getRole() == Role.ROLE_PROFESSOR) {
+            Professor professor = professorRepository.findByUsuario(usuarioLogado)
+                    .orElseThrow(() -> new RuntimeException("Perfil Professor não encontrado"));
+
+            estagiosPendentes = estagioRepository.findByOrientadorAndStatusEstagioIn(professor, List.of(StatusEstagio.EM_ANALISE));
+            conclusoesPendentes = estagioRepository.findByOrientadorAndStatusEstagioIn(professor, List.of(StatusEstagio.ANALISE_CONCLUIDO));
+            rescisoesPendentes = estagioRepository.findByOrientadorAndStatusEstagioIn(professor, List.of(StatusEstagio.ANALISE_RESCINDIDO));
+
+            // Precisamos de métodos customizados nos repositórios para filtrar por orientador
+            aditivosPendentes = aditivoRepository.findByStatusAndEstagioOrientador(StatusAditivo.EM_ANALISE, professor);
+            relatoriosPendentes = relatorioRepository.findByStatusAndEstagioOrientador(StatusRelatorio.EM_ANALISE, professor);
+        } else {
+            throw new AccessDeniedException("Acesso negado.");
+        }
+
+        // 3. Conversão para DTOs
+        return new DashboardPendenciasDTO(
+                estagiosPendentes.stream().map(this::converterParaDTO).toList(),
+                aditivosPendentes.stream().map(this::converterAditivoParaDTO).toList(),
+                relatoriosPendentes.stream().map(this::converterRelatorioParaDTO).toList(),
+                conclusoesPendentes.stream().map(this::converterParaDTO).toList(),
+                rescisoesPendentes.stream().map(this::converterParaDTO).toList()
+        );
     }
 }

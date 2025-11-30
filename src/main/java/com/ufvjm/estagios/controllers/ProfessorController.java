@@ -1,5 +1,6 @@
 package com.ufvjm.estagios.controllers;
 
+import com.ufvjm.estagios.dto.DashboardPendenciasDTO;
 import com.ufvjm.estagios.dto.EstagioResponseDTO;
 import com.ufvjm.estagios.dto.ProfessorRegisterDTO;
 import com.ufvjm.estagios.dto.ProfessorSimpleDTO;
@@ -58,5 +59,12 @@ public class ProfessorController {
     ) {
         List<EstagioResponseDTO> lista = estagioService.listarEstagiosDashboard(usuarioLogado);
         return ResponseEntity.ok(lista);
+    }
+
+    @GetMapping("/pendencias")
+    @PreAuthorize("hasAnyRole('COORDENADOR', 'PROFESSOR')")
+    public ResponseEntity<DashboardPendenciasDTO> getPendencias(@AuthenticationPrincipal Usuario usuarioLogado) {
+        DashboardPendenciasDTO pendencias = estagioService.getPendenciasDashboard(usuarioLogado);
+        return ResponseEntity.ok(pendencias);
     }
 }

@@ -1,6 +1,7 @@
 package com.ufvjm.estagios.repositories;
 
 import com.ufvjm.estagios.entities.Estagio;
+import com.ufvjm.estagios.entities.Professor;
 import com.ufvjm.estagios.entities.Relatorio;
 import com.ufvjm.estagios.entities.enums.StatusRelatorio;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -25,4 +26,9 @@ public interface RelatorioRepository extends JpaRepository<Relatorio, UUID> {
     );
 
     List<Relatorio> findByStatusAndDataPrevistaEntregaBefore(StatusRelatorio status, LocalDate data);
+
+    List<Relatorio> findByStatus(StatusRelatorio status);
+
+    @Query("SELECT r FROM Relatorio r WHERE r.status = :status AND r.estagio.orientador = :orientador")
+    List<Relatorio> findByStatusAndEstagioOrientador(StatusRelatorio status, Professor orientador);
 }
