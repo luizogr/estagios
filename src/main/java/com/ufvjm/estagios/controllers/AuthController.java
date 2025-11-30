@@ -56,6 +56,8 @@ public class AuthController {
     public ResponseEntity login(@RequestBody LoginRequestDTO body){
         Usuario usuario = this.repository.findByEmailInstitucional(body.emailInstitucional()).orElseThrow(() -> new RuntimeException("User not found"));
 
+        Aluno aluno = this.alunoRepository.findByUsuario(usuario).orElseThrow(() -> new RuntimeException("User not found"));
+
         System.out.println("ROLE DO USUARIO → " + usuario.getRole());
         if (!usuario.isAtivo()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -64,7 +66,7 @@ public class AuthController {
 
         if(passwordEncoder.matches(body.password(), usuario.getSenha())) {
             String token = this.tokenService.generateToken(usuario);
-            return ResponseEntity.ok(new ResponseDTO(usuario.getId(), usuario.getNome(), token, usuario.getRole().name()));
+            return ResponseEntity.ok(new ResponseDTO(usuario.getId(), usuario.getNome(), token, usuario.getRole().name(), aluno.getId()));
         }
         return ResponseEntity.badRequest().build();
     }
