@@ -17,7 +17,7 @@ public class EmailService {
         message.setSubject("Confirme seu cadastro no Sistema de Estágios");
 
         // O link que o aluno vai clicar (no seu frontend ou backend direto)
-        String link = "http://localhost:8080/auth/confirmar?token=" + token;
+        String link = "https://sistemaestagios.squareweb.app/auth/confirmar?token=" + token;
 
         message.setText("Olá! Clique no link para ativar sua conta: " + link);
 
