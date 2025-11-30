@@ -506,6 +506,7 @@ public class EstagioService {
                 estagio.getId(),
                 estagio.getStatusEstagio(),
                 estagio.getAluno().getUsuario().getNome(),
+                estagio.getAluno().getMatricula(),
                 estagio.getOrientador().getUsuario().getNome(),
                 estagio.getConcedente(),
                 estagio.getSupervisor(),
