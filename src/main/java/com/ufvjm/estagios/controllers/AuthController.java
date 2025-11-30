@@ -56,6 +56,7 @@ public class AuthController {
     public ResponseEntity login(@RequestBody LoginRequestDTO body){
         Usuario usuario = this.repository.findByEmailInstitucional(body.emailInstitucional()).orElseThrow(() -> new RuntimeException("User not found"));
 
+        System.out.println("ROLE DO USUARIO → " + usuario.getRole());
         if (!usuario.isAtivo()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body("Usuário não ativado. Verifique seu e-mail.");
