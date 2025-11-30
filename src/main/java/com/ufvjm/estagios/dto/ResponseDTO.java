@@ -5,7 +5,7 @@ import com.ufvjm.estagios.entities.enums.Role;
 import java.util.UUID;
 
 public record ResponseDTO (UUID id, String name, String token, String role, UUID alunoId){
-    /*public ResponseDTO(UUID id, String name, String token, String role, UUID alunoId) {
-        this(id, name, token, role, alunoId);
-    }*/
+    public ResponseDTO(UUID id, String name, String token, String role) {
+        this(id, name, token, role, null);
+    }
 }
