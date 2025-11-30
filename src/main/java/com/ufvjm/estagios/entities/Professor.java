@@ -1,7 +1,6 @@
 package com.ufvjm.estagios.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 import java.io.Serial;
@@ -19,7 +18,7 @@ public class Professor {
     private UUID id;
 
     @Column(unique = true, length = 7)
-    private String siap;
+    private String siape;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", referencedColumnName = "id")
@@ -29,9 +28,9 @@ public class Professor {
     public Professor() {
     }
 
-    public Professor(UUID id, String siap, Usuario usuario) {
+    public Professor(UUID id, String siape, Usuario usuario) {
         this.id = id;
-        this.siap = siap;
+        this.siape = siape;
         this.usuario = usuario;
     }
 
@@ -43,12 +42,12 @@ public class Professor {
         return id;
     }
 
-    public String getSiap() {
-        return siap;
+    public String getSiape() {
+        return siape;
     }
 
-    public void setSiap(String siap) {
-        this.siap = siap;
+    public void setSiape(String siap) {
+        this.siape = siap;
     }
 
     public Usuario getUsuario() {

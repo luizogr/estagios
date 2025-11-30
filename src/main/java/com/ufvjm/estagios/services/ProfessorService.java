@@ -2,7 +2,6 @@ package com.ufvjm.estagios.services;
 
 import com.ufvjm.estagios.dto.ProfessorRegisterDTO;
 import com.ufvjm.estagios.dto.ProfessorSimpleDTO;
-import com.ufvjm.estagios.dto.ResponseDTO;
 import com.ufvjm.estagios.entities.Professor;
 import com.ufvjm.estagios.entities.Usuario;
 import com.ufvjm.estagios.entities.enums.Role;
@@ -11,12 +10,9 @@ import com.ufvjm.estagios.repositories.EstagioRepository;
 import com.ufvjm.estagios.repositories.ProfessorRepository;
 import com.ufvjm.estagios.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -52,7 +48,7 @@ public class ProfessorService {
                             professor.getId(),
                             professor.getUsuario().getNome(),
                             professor.getUsuario().getEmailInstitucional(),
-                            professor.getSiap(),
+                            professor.getSiape(),
                             (int) totalAtivos
                     );
                 })
@@ -76,7 +72,7 @@ public class ProfessorService {
 
         // 3. Cria a entidade Professor e liga ao Usuario
         Professor newProfessor = new Professor();
-        newProfessor.setSiap(body.siap());
+        newProfessor.setSiape(body.siap());
         newProfessor.setUsuario(usuarioSalvo);
         //Professor professor = this.professorRepository.save(newProfessor);
 
