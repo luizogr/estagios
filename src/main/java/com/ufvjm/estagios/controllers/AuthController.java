@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/auth")
@@ -54,11 +55,9 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody LoginRequestDTO body){
-        Usuario usuario = this.repository.findByEmailInstitucional(body.emailInstitucional()).orElseThrow(() -> new RuntimeException("User not found"));
+        Usuario usuario = this.repository.findByEmailInstitucional(body.emailInstitucional())
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        Aluno aluno = this.alunoRepository.findByUsuario(usuario).orElseThrow(() -> new RuntimeException("User not found"));
-
-        System.out.println("ROLE DO USUARIO → " + usuario.getRole());
         if (!usuario.isAtivo()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body("Usuário não ativado. Verifique seu e-mail.");
@@ -66,8 +65,30 @@ public class AuthController {
 
         if(passwordEncoder.matches(body.password(), usuario.getSenha())) {
             String token = this.tokenService.generateToken(usuario);
-            return ResponseEntity.ok(new ResponseDTO(usuario.getId(), usuario.getNome(), token, usuario.getRole().name(), aluno.getId()));
+
+            // --- LÓGICA DINÂMICA DE PERFIL ---
+            UUID profileId = null;
+
+            if (usuario.getRole() == Role.ROLE_ALUNO) {
+                profileId = alunoRepository.findByUsuario(usuario)
+                        .map(Aluno::getId)
+                        .orElse(null);
+            } else if (usuario.getRole() == Role.ROLE_PROFESSOR) {
+                profileId = professorRepository.findByUsuario(usuario)
+                        .map(Professor::getId)
+                        .orElse(null);
+            }
+            // Se for COORDENADOR, profileId continua null (ou busca professor se ele tbm for)
+
+            return ResponseEntity.ok(new ResponseDTO(
+                    usuario.getId(),
+                    usuario.getNome(),
+                    token,
+                    usuario.getRole().name(),
+                    profileId // <-- Passa o ID correto (Aluno ou Professor)
+            ));
         }
+
         return ResponseEntity.badRequest().build();
     }
 
