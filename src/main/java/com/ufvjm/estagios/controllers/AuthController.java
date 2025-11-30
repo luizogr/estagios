@@ -75,6 +75,11 @@ public class AuthController {
             return ResponseEntity.badRequest().body("E-mail já cadastrado.");
         }
 
+        if (alunoRepository.findByMatricula(body.matricula()).isPresent()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("Matrícula já cadastrada.");
+        }
+
         // 2. Cria a entidade Usuario
         Usuario newUsuario = new Usuario();
         newUsuario.setSenha(passwordEncoder.encode(body.senha()));
