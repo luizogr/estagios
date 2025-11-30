@@ -12,15 +12,23 @@ public class EmailService {
     private JavaMailSender mailSender;
 
     public void enviarEmailConfirmacao(String emailDestino, String token) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(emailDestino);
-        message.setSubject("Confirme seu cadastro no Sistema de Estágios");
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom("noreply@seusistema.com"); // Alguns servidores exigem remetente
+            message.setTo(emailDestino);
+            message.setSubject("Confirme seu cadastro no Sistema de Estágios");
 
-        // O link que o aluno vai clicar (no seu frontend ou backend direto)
-        String link = "https://sistemaestagios.squareweb.app/auth/confirmar?token=" + token;
+            String link = "https://sistemaestagios.squareweb.app/auth/confirmar?token=" + token;
 
-        message.setText("Olá! Clique no link para ativar sua conta: " + link);
+            message.setText("Olá! Clique no link para ativar sua conta: " + link);
 
-        mailSender.send(message);
+            mailSender.send(message);
+            System.out.println("E-mail enviado com sucesso para: " + emailDestino);
+
+        } catch (Exception e) {
+            // ISSO VAI MOSTRAR O ERRO REAL NO CONSOLE
+            System.err.println("FALHA AO ENVIAR E-MAIL: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }
