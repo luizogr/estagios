@@ -67,6 +67,7 @@ public class ProfessorService {
         newUsuario.setSenha(passwordEncoder.encode(body.senha()));
         newUsuario.setEmailInstitucional(body.emailInstitucional());
         newUsuario.setNome(body.nome());
+        newUsuario.setAtivo(true);
         newUsuario.setRole(Role.ROLE_PROFESSOR);
         Usuario usuarioSalvo = this.usuarioRepository.save(newUsuario);
 
