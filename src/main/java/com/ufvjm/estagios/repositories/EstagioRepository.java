@@ -29,8 +29,9 @@ public interface EstagioRepository extends JpaRepository<Estagio, UUID> {
 
     @Query("SELECT e FROM Estagio e " +
             "JOIN e.orientador p " +
-            "LEFT JOIN Relatorio r ON r.estagio.id = e.id AND r.dataEntregaRelatorio IS NULL " + // Join com relatórios PENDENTES
+            "LEFT JOIN Relatorio r ON r.estagio.id = e.id AND r.dataEntregaRelatorio IS NULL " +
             "WHERE p.usuario = :usuarioLogado " +
+            "GROUP BY e " + // <--- ADICIONADO O GROUP BY AQUI
             "ORDER BY MIN(r.dataPrevistaEntrega) ASC") // Ordena pela menor (mais próxima) data prevista entre os relatórios pendentes
     List<Estagio> findEstagiosByProfessorUsuarioSortedByNextReportDate(@Param("usuarioLogado") Usuario usuarioLogado);
 
