@@ -163,10 +163,16 @@ public class EstagioService {
                 .toList();
     }
 
-    public List<Estagio> findEstagiosByProfessor(Usuario usuarioLogado){
+    public List<EstagioResponseDTO> findEstagiosByProfessor(Usuario usuarioLogado){
         Professor professor = professorRepository.findByUsuario(usuarioLogado)
                 .orElseThrow(() -> new RuntimeException("Perfil não encontrado"));
-        return estagioRepository.findEstagiosByProfessorUsuarioSortedByNextReportDate(usuarioLogado);
+        // Busca as entidades
+        List<Estagio> estagios = estagioRepository.findEstagiosByProfessorUsuarioSortedByNextReportDate(usuarioLogado); // ou findByOrientador(professor)
+
+        // MUDANÇA 2: Converte para DTO antes de retornar
+        return estagios.stream()
+                .map(this::converterParaDTO) // Usa o seu conversor existente
+                .toList();
     }
 
     @Transactional

@@ -37,8 +37,8 @@ public class ProfessorController {
 
     @GetMapping("/meus-estagios")
     @PreAuthorize("hasAnyRole('COORDENADOR', 'PROFESSOR')")
-    public ResponseEntity<List<Estagio>> getMeusEstagios(@AuthenticationPrincipal Usuario usuarioLogado) {
-        List<Estagio> listaEstagios = estagioService.findEstagiosByProfessor(usuarioLogado);
+    public ResponseEntity<List<EstagioResponseDTO>> getMeusEstagios(@AuthenticationPrincipal Usuario usuarioLogado) {
+        List<EstagioResponseDTO> listaEstagios = estagioService.findEstagiosByProfessor(usuarioLogado);
         return ResponseEntity.ok(listaEstagios);
     }
 
