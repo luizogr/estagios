@@ -372,6 +372,12 @@ public class EstagioService {
         if (dto.dataEntregaPlanoAtividade() != null){
             estagio.setDataEntregaPlanoDeAtividades(dto.dataEntregaPlanoAtividade());
         }
+        long diasTotal = estagio.getDataInicio().until(estagio.getDataTermino(), java.time.temporal.ChronoUnit.DAYS);
+
+        if (diasTotal > (365 * 2)) {
+            // Se ultrapassar 2 anos (aprox 730 dias), bloqueia.
+            throw new RuntimeException("A duração total do estágio não pode exceder 2 anos (Lei do Estágio).");
+        }
     }
 
     private void aplicarAtualizacaoAluno(Estagio estagio, EstagioUpdateDTO dto) {
@@ -405,6 +411,12 @@ public class EstagioService {
         if (estagio.getStatusEstagio() != StatusEstagio.EM_ANALISE) {
             estagio.setStatusEstagio(StatusEstagio.EM_ANALISE);
             estagio.setStatusEstagio(StatusEstagio.EM_ANALISE);
+        }
+        long diasTotal = estagio.getDataInicio().until(estagio.getDataTermino(), java.time.temporal.ChronoUnit.DAYS);
+
+        if (diasTotal > (365 * 2)) {
+            // Se ultrapassar 2 anos (aprox 730 dias), bloqueia.
+            throw new RuntimeException("A duração total do estágio não pode exceder 2 anos (Lei do Estágio).");
         }
     }
 
