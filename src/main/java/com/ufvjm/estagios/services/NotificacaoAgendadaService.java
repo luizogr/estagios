@@ -71,7 +71,7 @@ public class NotificacaoAgendadaService {
         }
     }
 
-    @Scheduled(cron = "0 0 2 * * *") // Exemplo
+    @Scheduled(cron = "0 30 15 * * *") // Exemplo
     public void rotinaDiariaDeNotificacoes() {
         verificarPrazosDeRelatorios(); // (Aviso de 7 e 15 dias)
         verificarDocumentosPendentes(); // (Aviso de pendência Laranja)
