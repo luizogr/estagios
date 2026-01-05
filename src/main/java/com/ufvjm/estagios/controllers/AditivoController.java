@@ -17,7 +17,7 @@ import java.util.UUID;
 public class AditivoController {
 
     @Autowired
-    private AditivoService aditivoService;
+    private AditivoService aditivoService; //teste
 
     @PatchMapping("/{id}/aprovar-aditivo")
     @PreAuthorize("hasAnyRole('COORDENADOR', 'PROFESSOR')")
