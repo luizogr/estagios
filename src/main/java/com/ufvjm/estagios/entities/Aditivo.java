@@ -3,6 +3,7 @@ package com.ufvjm.estagios.entities;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.ufvjm.estagios.entities.enums.StatusAditivo;
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.time.LocalDate;
 import java.util.Objects;
