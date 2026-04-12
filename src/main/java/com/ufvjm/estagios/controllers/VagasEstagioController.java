@@ -2,18 +2,21 @@ package com.ufvjm.estagios.controllers;
 
 
 import com.ufvjm.estagios.dto.VagasEstagioCreateDTO;
+import com.ufvjm.estagios.dto.VagasEstagioDTO;
 import com.ufvjm.estagios.entities.VagasEstagio;
 import com.ufvjm.estagios.services.VagasEstagioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/vagas-estagio")
 public class VagasEstagioController {
     @Autowired
     private VagasEstagioService vagasEstagioService;
-
 
     @PostMapping("/criar")
     //@PreAuthorize("hasAnyRole('COORDENADOR', 'PROFESSOR')")
@@ -22,5 +25,9 @@ public class VagasEstagioController {
         return vagasEstagioService.createVagaEstagio(dto);
     }
 
-
+    @GetMapping
+    public ResponseEntity<List<VagasEstagioDTO>> listarTodasVagas(){
+        List<VagasEstagioDTO> listaVagas = vagasEstagioService.listarTodasVagas();
+        return ResponseEntity.ok(listaVagas);
+    }
 }
