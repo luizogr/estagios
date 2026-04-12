@@ -2,7 +2,11 @@ package com.ufvjm.estagios.services;
 
 import com.ufvjm.estagios.dto.VagasEstagioCreateDTO;
 import com.ufvjm.estagios.dto.VagasEstagioDTO;
+import com.ufvjm.estagios.dto.VagasEstagioUpdateDTO;
+import com.ufvjm.estagios.entities.Estagio;
+import com.ufvjm.estagios.entities.Usuario;
 import com.ufvjm.estagios.entities.VagasEstagio;
+import com.ufvjm.estagios.entities.enums.Role;
 import com.ufvjm.estagios.repositories.ProfessorRepository;
 import com.ufvjm.estagios.repositories.VagasEstagioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class VagasEstagioService {
@@ -43,4 +48,27 @@ public class VagasEstagioService {
     public VagasEstagioDTO converterVagasParaDTO(VagasEstagio vagas){
         return new VagasEstagioDTO(vagas.getId(), vagas.getTitulo(), vagas.getDescricao(), vagas.getUrlVaga(), vagas.getUrlPdfDrive());
     }
+
+    public VagasEstagio editarVagEstagio(UUID id, VagasEstagioUpdateDTO dto, Usuario usuarioLogado){
+        VagasEstagio vagasEstagio = vagasEstagioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Vaga de Estágio não encontrada"));
+            vagasEstagio.setTitulo(dto.titulo());
+            vagasEstagio.setDescricao(dto.descricao());
+            vagasEstagio.setUrlVaga(dto.urlVaga());
+            vagasEstagio.setUrlPdfDrive(dto.urlPdfDrive());
+
+            return vagasEstagioRepository.save(vagasEstagio);
+    }
 }
+//Estagio estagio = estagioRepository.findById(id)
+//        .orElseThrow(() -> new RuntimeException("Estagio não encontrado"));
+//
+//        if (usuarioLogado.getRole() == Role.ROLE_COORDENADOR) {
+//aplicarAtualizacaoCoordenador(estagio, dto);
+//        } else if (usuarioLogado.getRole() == Role.ROLE_ALUNO) {
+//verificaDonoDoEstagio(estagio, usuarioLogado);
+//
+//aplicarAtualizacaoAluno(estagio, dto);
+//        } else {
+//                throw new AccessDeniedException("Usuario sem permissão para atualizar estagio");
+//        }
