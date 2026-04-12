@@ -18,7 +18,7 @@ import java.util.Collections;
 
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
-    @Autowired
+    @Autowired //injeção de dependencia
     TokenService tokenService;
     @Autowired
     UsuarioRepository usuarioRepository;

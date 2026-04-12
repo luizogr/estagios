@@ -6,3 +6,4 @@ public enum StatusRelatorio {
     APROVADO,
     REJEITADO
 }
+
