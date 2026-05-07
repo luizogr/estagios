@@ -60,15 +60,3 @@ public class VagasEstagioService {
             return vagasEstagioRepository.save(vagasEstagio);
     }
 }
-//Estagio estagio = estagioRepository.findById(id)
-//        .orElseThrow(() -> new RuntimeException("Estagio não encontrado"));
-//
-//        if (usuarioLogado.getRole() == Role.ROLE_COORDENADOR) {
-//aplicarAtualizacaoCoordenador(estagio, dto);
-//        } else if (usuarioLogado.getRole() == Role.ROLE_ALUNO) {
-//verificaDonoDoEstagio(estagio, usuarioLogado);
-//
-//aplicarAtualizacaoAluno(estagio, dto);
-//        } else {
-//                throw new AccessDeniedException("Usuario sem permissão para atualizar estagio");
-//        }
