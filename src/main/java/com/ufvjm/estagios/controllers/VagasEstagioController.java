@@ -35,7 +35,6 @@ public class VagasEstagioController {
     @PatchMapping("/{id}/editar-vaga")
     @PreAuthorize("hasAnyRole('COORDENADOR', 'PROFESSOR')")
     public VagasEstagio editarVagaEstagio(@RequestBody VagasEstagioUpdateDTO dto, @PathVariable String id){
-        // Lógica para editar uma vaga de estágio
         return vagasEstagioService.editarVagEstagio(java.util.UUID.fromString(id), dto, null);
 
     }
