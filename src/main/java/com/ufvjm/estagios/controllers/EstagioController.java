@@ -46,6 +46,7 @@ public class EstagioController {
         return ResponseEntity.ok(listaEstagios);
     }
 
+
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('COORDENADOR', 'PROFESSOR', 'ALUNO')")
     public ResponseEntity<EstagioResponseDTO> getEstagioById(@PathVariable UUID id, @AuthenticationPrincipal Usuario usuarioLogado) {
