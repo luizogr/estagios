@@ -20,13 +20,14 @@ public class VagasEstagioController {
     private VagasEstagioService vagasEstagioService;
 
     @PostMapping("/criar")
-    //@PreAuthorize("hasAnyRole('COORDENADOR', 'PROFESSOR')")
+    @PreAuthorize("hasAnyRole('COORDENADOR', 'PROFESSOR')")
     public VagasEstagio criarVagaEstagio(@RequestBody VagasEstagioCreateDTO dto) {
         // Lógica para criar uma vaga de estágio
         return vagasEstagioService.createVagaEstagio(dto);
     }
 
     @GetMapping("/listar-vagas")
+    @PreAuthorize("hasAnyRole('COORDENADOR', 'PROFESSOR', 'ALUNO')")
     public ResponseEntity<List<VagasEstagioDTO>> listarTodasVagas(){
         List<VagasEstagioDTO> listaVagas = vagasEstagioService.listarTodasVagas();
         return ResponseEntity.ok(listaVagas);
