@@ -3,13 +3,12 @@ package com.ufvjm.estagios.services;
 import com.ufvjm.estagios.dto.VagasEstagioCreateDTO;
 import com.ufvjm.estagios.dto.VagasEstagioDTO;
 import com.ufvjm.estagios.dto.VagasEstagioUpdateDTO;
-import com.ufvjm.estagios.entities.Estagio;
 import com.ufvjm.estagios.entities.Usuario;
 import com.ufvjm.estagios.entities.VagasEstagio;
-import com.ufvjm.estagios.entities.enums.Role;
 import com.ufvjm.estagios.repositories.ProfessorRepository;
 import com.ufvjm.estagios.repositories.VagasEstagioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -25,7 +24,7 @@ public class VagasEstagioService {
     private ProfessorRepository professorRepository;
 
 
-    public VagasEstagio createVagaEstagio(VagasEstagioCreateDTO dto) {
+    public VagasEstagioDTO createVagaEstagio(VagasEstagioCreateDTO dto) {
         VagasEstagio vagasEstagio = new VagasEstagio();//gera ID automatico
 
         vagasEstagio.setTitulo(dto.titulo());
@@ -33,7 +32,11 @@ public class VagasEstagioService {
         vagasEstagio.setUrlVaga(dto.urlVaga());
         vagasEstagio.setUrlPdfDrive(dto.urlPdfDrive());
 
-        return vagasEstagioRepository.save(vagasEstagio);
+        vagasEstagioRepository.save(vagasEstagio);
+
+        VagasEstagioDTO vagasEstagioDTO = converterVagasParaDTO(vagasEstagio);
+
+        return vagasEstagioDTO;
     }
 
     public List<VagasEstagioDTO> listarTodasVagas(){
@@ -49,7 +52,7 @@ public class VagasEstagioService {
         return new VagasEstagioDTO(vagas.getId(), vagas.getTitulo(), vagas.getDescricao(), vagas.getUrlVaga(), vagas.getUrlPdfDrive());
     }
 
-    public VagasEstagio editarVagEstagio(UUID id, VagasEstagioUpdateDTO dto, Usuario usuarioLogado){
+    public VagasEstagioDTO editarVagEstagio(UUID id, VagasEstagioUpdateDTO dto, Usuario usuarioLogado){
         VagasEstagio vagasEstagio = vagasEstagioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Vaga de Estágio não encontrada"));
             vagasEstagio.setTitulo(dto.titulo());
@@ -57,6 +60,17 @@ public class VagasEstagioService {
             vagasEstagio.setUrlVaga(dto.urlVaga());
             vagasEstagio.setUrlPdfDrive(dto.urlPdfDrive());
 
-            return vagasEstagioRepository.save(vagasEstagio);
+        vagasEstagioRepository.save(vagasEstagio);
+        VagasEstagioDTO vagaEstagioDTO = converterVagasParaDTO(vagasEstagio);
+
+            return vagaEstagioDTO;
     }
+
+    public void deletarVagEstagio(UUID id, Usuario usuarioLogado){
+        VagasEstagio vagasEstagio = vagasEstagioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Vaga de Estágio não encontrada"));
+        vagasEstagioRepository.delete(vagasEstagio);
+    }
+
+
 }
