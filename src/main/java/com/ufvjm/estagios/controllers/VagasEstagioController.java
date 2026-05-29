@@ -38,8 +38,8 @@ public class VagasEstagioController {
 
     @PatchMapping("/{id}/editar-vaga")
     @PreAuthorize("hasAnyRole('COORDENADOR', 'PROFESSOR')")
-    public VagasEstagioDTO editarVagaEstagio(@RequestBody VagasEstagioUpdateDTO dto, @PathVariable UUID id){
-        return vagasEstagioService.editarVagEstagio(id, dto, null);
+    public VagasEstagioDTO editarVagaEstagio(@RequestBody VagasEstagioUpdateDTO dto){
+        return vagasEstagioService.editarVagEstagio(dto);
 
     }
 

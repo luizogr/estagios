@@ -52,8 +52,8 @@ public class VagasEstagioService {
         return new VagasEstagioDTO(vagas.getId(), vagas.getTitulo(), vagas.getDescricao(), vagas.getUrlVaga(), vagas.getUrlPdfDrive());
     }
 
-    public VagasEstagioDTO editarVagEstagio(UUID id, VagasEstagioUpdateDTO dto, Usuario usuarioLogado){
-        VagasEstagio vagasEstagio = vagasEstagioRepository.findById(id)
+    public VagasEstagioDTO editarVagEstagio(VagasEstagioUpdateDTO dto){
+        VagasEstagio vagasEstagio = vagasEstagioRepository.findById(dto.id())
                 .orElseThrow(() -> new RuntimeException("Vaga de Estágio não encontrada"));
             vagasEstagio.setTitulo(dto.titulo());
             vagasEstagio.setDescricao(dto.descricao());
