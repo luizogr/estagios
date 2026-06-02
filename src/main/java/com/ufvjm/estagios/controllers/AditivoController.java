@@ -1,5 +1,6 @@
 package com.ufvjm.estagios.controllers;
 
+import com.ufvjm.estagios.controllers.docs.AditivoControllerDocs;
 import com.ufvjm.estagios.dto.RejeicaoDTO;
 import com.ufvjm.estagios.entities.Usuario;
 import com.ufvjm.estagios.services.AditivoService;
@@ -14,13 +15,14 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/aditivos")
-public class AditivoController {
+public class AditivoController implements AditivoControllerDocs {
 
     @Autowired
     private AditivoService aditivoService; //teste
 
     @PatchMapping("/{id}/aprovar-aditivo")
     @PreAuthorize("hasAnyRole('COORDENADOR', 'PROFESSOR')")
+    @Override
     public ResponseEntity<Void> aprovarAditivo(@PathVariable UUID id, @AuthenticationPrincipal Usuario usuarioLogado){
         aditivoService.aprovarAditivo(id, usuarioLogado);
         return ResponseEntity.ok().build();
@@ -28,6 +30,7 @@ public class AditivoController {
 
     @PatchMapping("/{id}/rejeitar")
     @PreAuthorize("hasAnyRole('COORDENADOR', 'PROFESSOR')")
+    @Override
     public ResponseEntity<Void> rejeitarAditivo(@PathVariable UUID id, @Valid @RequestBody RejeicaoDTO dto, @AuthenticationPrincipal Usuario usuarioLogado){
         aditivoService.rejeitarAditivo(id, dto, usuarioLogado);
         return ResponseEntity.noContent().build();
