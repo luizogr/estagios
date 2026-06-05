@@ -44,7 +44,7 @@ public class  EstagioService {
                 .orElseThrow(() -> new RuntimeException("Professor não encontrado"));
 
         // Verifica se ja possui estágio com o status ativo ou em_analise
-        List<StatusEstagio> statusAtivos = List.of(StatusEstagio.ATIVO, StatusEstagio.EM_ANALISE);
+        List<StatusEstagio> statusAtivos = List.of(StatusEstagio.ATIVO, StatusEstagio.EM_ANALISE); // Colocar outros status
 
         boolean jaPossuiEstagio = estagioRepository.existsByAlunoAndStatusEstagioIn(aluno, statusAtivos);
 
