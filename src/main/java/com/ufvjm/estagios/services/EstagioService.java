@@ -73,8 +73,6 @@ public class  EstagioService {
 
         Estagio estagioSalvo = estagioRepository.save(novoEstagio);
 
-        relatorioService.gerarPrimeiroRelatorio(estagioSalvo);
-
         notificacaoService.criarNotificacao(
                 orientador.getUsuario(),
                 "Novo Estágio Pendente",
@@ -110,6 +108,8 @@ public class  EstagioService {
             estagio.setStatusEstagio(StatusEstagio.ATIVO);
 
             estagioRepository.save(estagio);
+
+            relatorioService.sincronizarRelatoriosPendentes();
 
             String nomeProfessor = professorRepository.findByUsuario(usuarioLogado)
                     .orElseThrow(() -> new RuntimeException("Professor não encontrado"))
