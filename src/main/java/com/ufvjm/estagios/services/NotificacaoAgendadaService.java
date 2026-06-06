@@ -26,7 +26,7 @@ public class NotificacaoAgendadaService {
     private EstagioRepository estagioRepository;
 
     public void verificarPrazosDeRelatorios() {
-        LocalDate prazo7dias = LocalDate.now().plusDays(7);
+        //LocalDate prazo7dias = LocalDate.now().plusDays(7);
         LocalDate prazo15dias = LocalDate.now().plusDays(15);
 
         List<Relatorio> relatoriosVencendo = relatorioRepository.findAllPendentesComPrazoEntre(LocalDate.now(), prazo15dias);
@@ -34,7 +34,9 @@ public class NotificacaoAgendadaService {
         for (Relatorio relatorio : relatoriosVencendo) {
             long diasAteVencer = LocalDate.now().until(relatorio.getDataPrevistaEntrega(), java.time.temporal.ChronoUnit.DAYS);
 
-            notificacaoService.criarNotificacao(relatorio.getEstagio().getAluno().getUsuario(), "Relatorio vence em " + diasAteVencer + " dias", "Seu relatório deve ser entregue até " + relatorio.getDataPrevistaEntrega(), TipoNotificacao.AVISO_PRAZO);
+            if (diasAteVencer == 15 || diasAteVencer == 7 || diasAteVencer == 1) {
+                notificacaoService.criarNotificacao(relatorio.getEstagio().getAluno().getUsuario(), "Relatorio vence em " + diasAteVencer + " dias", "Seu relatório deve ser entregue até " + relatorio.getDataPrevistaEntrega(), TipoNotificacao.AVISO_PRAZO);
+            }
         }
     }
 
