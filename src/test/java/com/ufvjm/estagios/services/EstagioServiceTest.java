@@ -11,7 +11,7 @@ class EstagioServiceTest {
 
     @Mock
     private EstagioRepository estagioRepository;
-    Mock
+    @Mock
     private AlunoRepository alunoRepository;
     @Mock
     private ProfessorRepository professorRepository;
