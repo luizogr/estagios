@@ -54,9 +54,9 @@ class NotificacaoAgendadaServiceTest {
     void deveExecutarRotinaDiariaEDispararTodasAsNotificacoesComSucesso() {
         Relatorio relatorioVencendo = new Relatorio();
         relatorioVencendo.setEstagio(estagioMock);
-        relatorioVencendo.setDataPrevistaEntrega(LocalDate.now().plusDays(10));
+        relatorioVencendo.setDataPrevistaEntrega(LocalDate.now().plusDays(15));
 
-        when(relatorioRepository.findAllPendentesComPrazoEntre(eq(LocalDate.now()), any(LocalDate.class)))
+        when(relatorioRepository.findAllPendentesComPrazoEntre(eq(LocalDate.now()), eq(LocalDate.now().plusDays(15))))
                 .thenReturn(List.of(relatorioVencendo));
 
         when(estagioRepository.findAllActiveWithMissingDocuments())
@@ -66,14 +66,14 @@ class NotificacaoAgendadaServiceTest {
         relatorioAtrasado.setEstagio(estagioMock);
         relatorioAtrasado.setStatus(StatusRelatorio.PENDENTE);
 
-        when(relatorioRepository.findAllPendentesComPrazoEntre(eq(LocalDate.MIN), any(LocalDate.class)))
+        when(relatorioRepository.findAllPendentesComPrazoEntre(eq(LocalDate.MIN), eq(LocalDate.now().minusDays(1))))
                 .thenReturn(List.of(relatorioAtrasado));
 
         notificacaoAgendadaService.rotinaDiariaDeNotificacoes();
 
         verify(notificacaoService).criarNotificacao(
                 eq(usuarioMock),
-                eq("Relatorio vence em 10 dias"),
+                eq("Relatorio vence em 15 dias"),
                 eq("Seu relatório deve ser entregue até " + relatorioVencendo.getDataPrevistaEntrega()),
                 eq(TipoNotificacao.AVISO_PRAZO)
         );

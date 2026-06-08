@@ -37,7 +37,6 @@ public class ProfessorService {
         List<Professor> professores = professorRepository.findAll();
 
 
-
         return professores.stream()
                 .map(professor -> {
                     long totalAtivos = estagioRepository.findByOrientador(professor).stream()
@@ -75,7 +74,6 @@ public class ProfessorService {
         Professor newProfessor = new Professor();
         newProfessor.setSiap(body.siap());
         newProfessor.setUsuario(usuarioSalvo);
-        //Professor professor = this.professorRepository.save(newProfessor);
 
         return this.professorRepository.save(newProfessor);
     }
