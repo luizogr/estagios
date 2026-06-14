@@ -19,6 +19,8 @@ public class VagasEstagio {
     private UUID id;
     private String urlVaga;
     private String urlPdfDrive;
+
+    @Column(columnDefinition = "TEXT")
     private String descricao;
     private String titulo;
 
