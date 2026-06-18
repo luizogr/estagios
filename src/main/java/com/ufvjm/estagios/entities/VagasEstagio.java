@@ -17,7 +17,9 @@ public class VagasEstagio {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+    @Column(columnDefinition = "TEXT")
     private String urlVaga;
+    @Column(columnDefinition = "TEXT")
     private String urlPdfDrive;
 
     @Column(columnDefinition = "TEXT")
@@ -27,7 +29,7 @@ public class VagasEstagio {
     public VagasEstagio(){
     }
 
-    public VagasEstagio(String descricao, UUID id, String urlurlVaga, String titulo) {
+    public VagasEstagio(String descricao, UUID id, String urlVaga, String titulo) {
         this.descricao = descricao;
         this.id = id;
         this.urlVaga = urlVaga;
