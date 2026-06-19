@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -31,6 +32,8 @@ public class VagasEstagioService {
         vagasEstagio.setDescricao(dto.descricao());
         vagasEstagio.setUrlVaga(dto.urlVaga());
         vagasEstagio.setUrlPdfDrive(dto.urlPdfDrive());
+        vagasEstagio.setDataDePublicacao(LocalDate.now());
+
 
         vagasEstagioRepository.save(vagasEstagio);
 
@@ -55,7 +58,7 @@ public class VagasEstagioService {
     }
 
     public VagasEstagioDTO converterVagasParaDTO(VagasEstagio vagas){
-        return new VagasEstagioDTO(vagas.getId(), vagas.getTitulo(), vagas.getDescricao(), vagas.getUrlVaga(), vagas.getUrlPdfDrive());
+        return new VagasEstagioDTO(vagas.getId(), vagas.getTitulo(), vagas.getDescricao(), vagas.getUrlVaga(), vagas.getUrlPdfDrive(), vagas.getDataDePublicacao());
     }
 
     public VagasEstagioDTO editarVagEstagio(VagasEstagioUpdateDTO dto){

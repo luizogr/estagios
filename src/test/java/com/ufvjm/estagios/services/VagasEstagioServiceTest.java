@@ -15,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -47,7 +48,7 @@ class VagasEstagioServiceTest {
     @Test
     void createVagaEstagio_Success() {
         // Arrange
-        VagasEstagioCreateDTO createDTO = new VagasEstagioCreateDTO("Nova Vaga", "Nova Descrição", "http://nova.com", "http://novopdf.com");
+        VagasEstagioCreateDTO createDTO = new VagasEstagioCreateDTO("Nova Vaga", "Nova Descrição", "http://nova.com", "http://novopdf.com", LocalDate.now());
         ArgumentCaptor<VagasEstagio> vagaCaptor = ArgumentCaptor.forClass(VagasEstagio.class);
 
         // Act
