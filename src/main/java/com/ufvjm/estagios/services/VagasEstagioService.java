@@ -48,6 +48,12 @@ public class VagasEstagioService {
         return listaVagasDTO;
     }
 
+    public VagasEstagioDTO listarVagaPorId(UUID id){
+        VagasEstagio vagasEstagio = vagasEstagioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Vaga de Estágio não encontrada"));
+        return converterVagasParaDTO(vagasEstagio);
+    }
+
     public VagasEstagioDTO converterVagasParaDTO(VagasEstagio vagas){
         return new VagasEstagioDTO(vagas.getId(), vagas.getTitulo(), vagas.getDescricao(), vagas.getUrlVaga(), vagas.getUrlPdfDrive());
     }

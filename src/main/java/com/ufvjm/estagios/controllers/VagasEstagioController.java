@@ -36,6 +36,13 @@ public class VagasEstagioController {
         return ResponseEntity.ok(listaVagas);
     }
 
+    @GetMapping("/{id}/listar-vaga")
+    @PreAuthorize("hasAnyRole('COORDENADOR', 'PROFESSOR', 'ALUNO')")
+    public ResponseEntity<VagasEstagioDTO> listarVagaPorId(@PathVariable UUID id){
+        VagasEstagioDTO vaga = vagasEstagioService.listarVagaPorId(id);
+        return ResponseEntity.ok(vaga);
+    }
+
     @PatchMapping("/{id}/editar-vaga")
     @PreAuthorize("hasAnyRole('COORDENADOR', 'PROFESSOR')")
     public VagasEstagioDTO editarVagaEstagio(@RequestBody VagasEstagioUpdateDTO dto){

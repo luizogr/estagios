@@ -29,13 +29,6 @@ public class NotificacaoController {
     @Autowired
     private NotificacaoService notificacaoService;
 
-    @GetMapping("/test")
-    @PreAuthorize("permitAll()")
-    public ResponseEntity<String> test() {
-        logger.info("Endpoint de teste chamado");
-        return ResponseEntity.ok("Notificação Controller está funcionando!");
-    }
-
     @GetMapping("/minhas-notificacoes")
     @PreAuthorize("hasAnyRole('ALUNO','PROFESSOR','COORDENADOR')")
     public ResponseEntity<List<Notificacao>> getMinhasNotificacoes(@AuthenticationPrincipal Usuario usuarioLogado) {
