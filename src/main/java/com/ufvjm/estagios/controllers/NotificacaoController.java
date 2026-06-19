@@ -37,7 +37,7 @@ public class NotificacaoController {
     @PostMapping("/{estagioId}/enviar-mensagem")
     @PreAuthorize("hasAnyRole('COORDENADOR', 'PROFESSOR')")
     public ResponseEntity<Void> enviarMensagem(
-            @PathVariable UUID estagioId,
+            @PathVariable("estagioId") UUID estagioId,
             @Valid @RequestBody MensagemDTO mensagemDTO,
             @AuthenticationPrincipal Usuario remetente
     ) {
