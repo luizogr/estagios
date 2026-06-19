@@ -6,6 +6,8 @@ import com.ufvjm.estagios.entities.Usuario;
 import com.ufvjm.estagios.repositories.NotificacaoRepository;
 import com.ufvjm.estagios.services.NotificacaoService;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,15 +21,24 @@ import java.util.UUID;
 @RequestMapping("/api/notificacoes")
 public class NotificacaoController {
 
+    private static final Logger logger = LoggerFactory.getLogger(NotificacaoController.class);
+
     @Autowired
     private NotificacaoRepository notificacaoRepository;
 
     @Autowired
     private NotificacaoService notificacaoService;
 
+    @GetMapping("/test")
+    public ResponseEntity<String> test() {
+        logger.info("Endpoint de teste chamado");
+        return ResponseEntity.ok("Notificação Controller está funcionando!");
+    }
+
     @GetMapping("/minhas-notificacoes")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Notificacao>> getMinhasNotificacoes(@AuthenticationPrincipal Usuario usuarioLogado) {
+        logger.info("Buscando notificações para usuário: {}", usuarioLogado.getId());
         List<Notificacao> notificacoes = notificacaoRepository
                 .findByDestinatarioOrderByDataCriacaoDesc(usuarioLogado);
 
@@ -41,6 +52,7 @@ public class NotificacaoController {
             @Valid @RequestBody MensagemDTO mensagemDTO,
             @AuthenticationPrincipal Usuario remetente
     ) {
+        logger.info("Enviando mensagem para estágio: {}", estagioId);
         notificacaoService.enviarMensagemParaAluno(estagioId, mensagemDTO, remetente);
         return ResponseEntity.noContent().build();
     }

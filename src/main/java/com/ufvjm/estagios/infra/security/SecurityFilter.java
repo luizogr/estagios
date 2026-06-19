@@ -25,16 +25,28 @@ public class SecurityFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        var token = this.recoverToken(request);
-        var login = tokenService.validateToken(token);
-
-        if(login != null){
-            Usuario usuario = usuarioRepository.findByEmailInstitucional(login).orElseThrow(() -> new RuntimeException("User Not Found"));
-            var authorities = Collections.singletonList(new SimpleGrantedAuthority(usuario.getRole().name()));
-            var authentication = new UsernamePasswordAuthenticationToken(usuario, null, authorities);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        try {
+            var token = this.recoverToken(request);
+            if (token != null) {
+                var login = tokenService.validateToken(token);
+                if (login != null) {
+                    Usuario usuario = usuarioRepository.findByEmailInstitucional(login)
+                            .orElseThrow(() -> new RuntimeException("User Not Found"));
+                    var authorities = Collections.singletonList(new SimpleGrantedAuthority(usuario.getRole().name()));
+                    var authentication = new UsernamePasswordAuthenticationToken(usuario, null, authorities);
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Erro no SecurityFilter: " + e.getMessage());
+            e.printStackTrace();
         }
         filterChain.doFilter(request, response);
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        return request.getRequestURI().startsWith("/auth/");
     }
 
     private String recoverToken(HttpServletRequest request){
