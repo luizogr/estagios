@@ -58,9 +58,11 @@ public class NotificacaoAgendadaService {
     }
 
     private void verificarRelatoriosAtrasados() {
+
+        LocalDate inicio = LocalDate.of(2020, 1, 1);
         // 1. Busca relatórios com prazo no passado e status PENDENTE
         List<Relatorio> relatoriosAtrasados = relatorioRepository
-                .findAllPendentesComPrazoEntre(LocalDate.MIN, LocalDate.now().minusDays(1)); // Do início dos tempos até ontem
+                .findAllPendentesComPrazoEntre(inicio, LocalDate.now().minusDays(1)); // Do início dos tempos até ontem
 
         for (Relatorio relatorio : relatoriosAtrasados) {
             // 2. Cria a notificação de Atraso (O card Vermelho)
