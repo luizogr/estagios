@@ -66,7 +66,7 @@ class NotificacaoAgendadaServiceTest {
         relatorioAtrasado.setEstagio(estagioMock);
         relatorioAtrasado.setStatus(StatusRelatorio.PENDENTE);
 
-        when(relatorioRepository.findAllPendentesComPrazoEntre(eq(LocalDate.MIN), eq(LocalDate.now().minusDays(1))))
+        when(relatorioRepository.findAllPendentesComPrazoEntre(eq(LocalDate.of(2020, 1, 1)), eq(LocalDate.now().minusDays(1))))
                 .thenReturn(List.of(relatorioAtrasado));
 
         notificacaoAgendadaService.rotinaDiariaDeNotificacoes();
