@@ -41,8 +41,8 @@ public class EstagioController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('COORDENADOR', 'PROFESSOR')")
-    public ResponseEntity<List<Estagio>> listarTodosEstagios(){
-        List<Estagio> listaEstagios = estagioService.listarTodosEstagios();
+    public ResponseEntity<List<EstagioResponseDTO>> listarTodosEstagios(){
+        List<EstagioResponseDTO> listaEstagios = estagioService.listarTodosEstagios();
         return ResponseEntity.ok(listaEstagios);
     }
 

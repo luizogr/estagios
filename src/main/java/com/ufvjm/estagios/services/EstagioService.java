@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -126,8 +127,14 @@ public class  EstagioService {
         }
     }
 
-    public List<Estagio> listarTodosEstagios(){
-        return estagioRepository.findAllSortedByNextReportDate();
+    public List<EstagioResponseDTO> listarTodosEstagios(){
+        List<Estagio> estagios = estagioRepository.findAllSortedByNextReportDate();
+        List<EstagioResponseDTO> estagioDTO = new ArrayList<>();
+        for (Estagio estagio : estagios) {
+            estagioDTO.add(converterParaDTO(estagio));
+
+        }
+        return estagioDTO;
     }
 
     public EstagioResponseDTO getEstagioById(UUID estagioId, Usuario usuarioLogado){
