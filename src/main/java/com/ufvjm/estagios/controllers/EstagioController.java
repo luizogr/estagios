@@ -102,4 +102,18 @@ public class EstagioController {
         estagioService.rejeitarEstagio(id, dto, usuarioLogado);
         return ResponseEntity.noContent().build();
     }
+
+    @PatchMapping("/{id}/rejeitar-conclusao")
+    @PreAuthorize("hasAnyRole('PROFESSOR', 'COORDENADOR')")
+    public ResponseEntity<Void> rejeitarConclusao(@PathVariable UUID id, @Valid @RequestBody RejeicaoDTO dto, @AuthenticationPrincipal Usuario usuarioLogado) {
+        estagioService.rejeitarConclusao(id, dto, usuarioLogado);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/rejeitar-rescisao")
+    @PreAuthorize("hasAnyRole('PROFESSOR', 'COORDENADOR')")
+    public ResponseEntity<Void> rejeitarRescisao(@PathVariable UUID id, @Valid @RequestBody RejeicaoDTO dto, @AuthenticationPrincipal Usuario usuarioLogado) {
+        estagioService.rejeitarRescisao(id, dto, usuarioLogado);
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -452,6 +452,70 @@ public class  EstagioService {
         notificacaoService.criarNotificacao(estagio.getAluno().getUsuario(), "Estágio Rejeitado", "Motivo: " + dto.motivo(), TipoNotificacao.REJEITADO);
     }
 
+    @Transactional
+    public void rejeitarConclusao(UUID estagioId, RejeicaoDTO dto, Usuario usuarioLogado){
+        Estagio estagio = estagioRepository.findById(estagioId)
+                .orElseThrow(() -> new RuntimeException("Estagio não encontrado"));
+
+        boolean temPermissao = false;
+
+        if (usuarioLogado.getRole() == Role.ROLE_COORDENADOR) {
+            temPermissao = true;
+        } else if (usuarioLogado.getRole() == Role.ROLE_PROFESSOR) {
+            Professor professor = professorRepository.findByUsuario(usuarioLogado)
+                    .orElseThrow(() -> new RuntimeException("Perfil não encontrado"));
+
+            if(estagio.getOrientador().equals(professor)){
+                temPermissao = true;
+            }
+        }
+        if (!temPermissao) {
+            throw new AccessDeniedException("Usuario sem permissão");
+        }
+
+        if (estagio.getStatusEstagio() == StatusEstagio.ANALISE_CONCLUIDO) {
+            estagio.setStatusEstagio(StatusEstagio.REJEITADO);
+
+            estagioRepository.save(estagio);
+
+            notificacaoService.criarNotificacao(estagio.getAluno().getUsuario(), "Conclusão Rejeitada", "Motivo: " + dto.motivo(), TipoNotificacao.REJEITADO);
+        } else {
+            throw new RuntimeException("Estagio não está em analise de conclusão");
+        }
+    }
+
+    @Transactional
+    public void rejeitarRescisao(UUID estagioId, RejeicaoDTO dto, Usuario usuarioLogado){
+        Estagio estagio = estagioRepository.findById(estagioId)
+                .orElseThrow(() -> new RuntimeException("Estagio não encontrado"));
+
+        boolean temPermissao = false;
+
+        if (usuarioLogado.getRole() == Role.ROLE_COORDENADOR) {
+            temPermissao = true;
+        } else if (usuarioLogado.getRole() == Role.ROLE_PROFESSOR) {
+            Professor professor = professorRepository.findByUsuario(usuarioLogado)
+                    .orElseThrow(() -> new RuntimeException("Perfil não encontrado"));
+
+            if(estagio.getOrientador().equals(professor)){
+                temPermissao = true;
+            }
+        }
+        if (!temPermissao) {
+            throw new AccessDeniedException("Usuario sem permissão");
+        }
+
+        if (estagio.getStatusEstagio() == StatusEstagio.ANALISE_RESCINDIDO) {
+            estagio.setStatusEstagio(StatusEstagio.REJEITADO);
+
+            estagioRepository.save(estagio);
+
+            notificacaoService.criarNotificacao(estagio.getAluno().getUsuario(), "Recisão Rejeitada", "Motivo: " + dto.motivo(), TipoNotificacao.REJEITADO);
+        } else {
+            throw new RuntimeException("Estagio não está em analise de rescisão");
+        }
+    }
+
     private RelatorioResponseDTO converterRelatorioParaDTO(Relatorio relatorio) {
 
         // Se estiver APROVADO, ele já está concluído.
