@@ -37,3 +37,9 @@ build/
 .env.local
 *.env
 /src/main/resources/*.properties
+*.jar
+*.zip
+*.app
+/squarecloud/
+squarecloud/
+estagios-0.0 (6).1-SNAPSHOT/
