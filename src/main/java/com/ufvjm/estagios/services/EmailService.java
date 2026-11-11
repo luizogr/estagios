@@ -1,6 +1,7 @@
 package com.ufvjm.estagios.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,9 @@ public class EmailService {
     @Autowired
     private JavaMailSender mailSender;
 
+    @Value("${app.confirmation-url}")
+    private String confirmationUrl;
+
     public void enviarEmailConfirmacao(String emailDestino, String token) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
@@ -18,7 +22,7 @@ public class EmailService {
             message.setTo(emailDestino);
             message.setSubject("Confirme seu cadastro no Sistema de Estágios");
 
-            String link = "https://sistemaestagios.squareweb.app/auth/confirmar?token=" + token;
+            String link = confirmationUrl + "?token=" + token;
 
             message.setText("Olá! Clique no link para ativar sua conta: " + link);
 
